@@ -1,0 +1,177 @@
+// Top CTA
+.home__cta {
+  text-align: center;
+
+  > h1 {
+    font-size: 2.5rem;
+    color: rgb(48, 50, 52);
+    margin-bottom: 10px;
+  }
+
+  > p {
+    font-size: 18px;
+    line-height: 28px;
+    max-width: 500px;
+    margin: 0px auto;
+    color: rgb(48, 50, 52);
+  }
+}
+
+// Individual token containers
+.token {
+  background-color: white;
+  padding: 0px 5px;
+  border: 1px solid rgb(236, 237, 239);
+  border-radius: 4px;
+  display: inline-flex;
+  vertical-align: middle;
+  align-items: center;
+
+  img {
+    height: 18px;
+    padding-right: 5px;
+  }
+
+  span {
+    font-size: 16px;
+    font-weight: 500;
+  }
+}
+
+// Claim card
+.home__card {
+  margin-top: 40px;
+  background-color: white;
+  border: 1px solid rgb(236, 237, 239);
+  border-radius: 5px;
+  box-shadow: 0px 6px 10px 1px #eeeeee;
+
+  .home__card_title {
+    border-bottom: 2px solid rgb(237, 238, 240);
+    padding: 15px 20px;
+
+    > h3 {
+      margin: 0px;
+      font-weight: 500;
+      font-size: 18px;
+      transform: translateY(1px);
+    }
+  }
+
+  .home__card_content {
+    padding: 20px;
+
+    > p {
+      line-height: 24px;
+    }
+  }
+}
+
+// Twitter sign-out button
+.content__twitter {
+  margin-top: 20px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+
+  > button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    text-decoration: underline;
+    color: rgb(114, 114, 114);
+  }
+}
+
+// Unauthenticated claim status
+.content__unauthenticated {
+  p {
+    margin: 0px;
+
+    a {
+      color: inherit;
+    }
+  }
+}
+
+// Authenticated claim status
+.content__authenticated {
+  > button {
+    display: inline-block;
+    margin: 0px auto;
+  }
+}
+
+// Authenticated claim status — already claimed
+.content__claimed {
+  p {
+    margin: 0px;
+  }
+}
+
+// Authenticated claim status — unclaimed
+.content__unclaimed {
+  p {
+    line-height: 24px;
+
+    &:nth-of-type(1) {
+      margin-top: 0px;
+    }
+
+    &:nth-last-of-type(1) {
+      margin-bottom: 0px;
+    }
+  }
+
+  input {
+    display: block;
+    width: calc(100% - 14px);
+    border: 2px solid rgb(234, 234, 234);
+    font-size: 16px;
+    padding: 10px 5px;
+    border-radius: 5px;
+    margin: 20px 0px 10px 0px;
+  }
+
+  > button {
+    margin-top: 0px !important;
+  }
+}
+
+// Contract balance status
+.home__balances {
+  text-align: center;
+
+  > p {
+    font-size: 14px;
+    color: rgb(114, 114, 114);
+  }
+}
+
+// Main blue button
+.button__main {
+  width: 100%;
+  margin-top: 20px;
+  background-color: rgba(29, 155, 240);
+  color: white;
+  padding: 10px 0px;
+  border-radius: 5px;
+  border: none;
+  font-size: 15px;
+  cursor: pointer;
+  transition: 100ms ease-in-out;
+
+  &:hover {
+    opacity: 0.9;
+  }
+
+  &:disabled {
+    background-color: rgb(21, 112, 173);
+    cursor: not-allowed;
+  }
+
+  &:hover:disabled {
+    opacity: 1;
+    cursor: not-allowed;
+  }
+}
