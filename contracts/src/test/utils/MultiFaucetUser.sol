@@ -85,6 +85,12 @@ contract MultiFaucetUser is ERC721Holder {
         FAUCET.updateSuperOperator(_operator);
     }
 
+    /// @notice Updates token collection URI
+    /// @param _URI new collection URI
+    function updateTokenURI(string memory _URI) public {
+        FAUCET.updateTokenURI(_URI);
+    }
+
     /// @notice Allows receiving ETH
     receive() external payable {}
 }

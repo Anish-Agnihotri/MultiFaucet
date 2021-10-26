@@ -31,7 +31,7 @@ contract MultiFaucetTest is DSTestExtended {
         WETH = new ERC20Mintable("Wrapped Ether", "wETH");
 
         // Create faucet
-        FAUCET = new MultiFaucet(address(DAI), address(WETH));
+        FAUCET = new MultiFaucet(address(DAI), address(WETH), "https://test.com");
 
         // Fund faucet
         (bool success, ) = payable(address(FAUCET)).call{value: 100 ether}("");

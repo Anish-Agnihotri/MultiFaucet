@@ -7,6 +7,11 @@ import "./utils/MultiFaucetTest.sol"; // MultiFaucet ds-test
 
 /// ============ Libraries ============
 
+library URIs {
+    string constant defaultURI = 'https://test.com';
+    string constant alternativeURI = 'https://alternative.com';
+}
+
 library Errors {
     string constant NotSuperOperator = 'Not super operator';
     string constant NotApprovedOperator = 'Not approved operator';
@@ -31,6 +36,11 @@ contract Tests is MultiFaucetTest {
         assertEq(BOB.DAIBalance(), bobDAIBalanceBefore + 5_000e18);
         assertEq(BOB.WETHBalance(), bobWETHBalanceBefore + 5e18);
         assertEq(BOB.NFTBalance(), bobNFTCountBefore + 5);
+
+        // Check token uris
+        for (uint256 i = 1; i <= 5; i++) {
+            assertEq(FAUCET.tokenURI(i), URIs.defaultURI);
+        }
     }
 
     /// @notice Prevent dripping if not approved operator
@@ -134,5 +144,27 @@ contract Tests is MultiFaucetTest {
         assertEq(ethDrips, 20);
         assertEq(daiDrips, 20);
         assertEq(wethDrips, 20);
+    }
+
+    /// @notice Allows super operator to update collection URI
+    function testAllowsUpdatingURI() public {
+        // Drip to Bob
+        ALICE.drip(address(BOB));
+
+        // Ensure old URI for bobs tokens
+        for (uint256 i = 1; i <= 5; i++) {
+            assertEq(FAUCET.tokenURI(i), URIs.defaultURI);
+        }
+
+        // Update URI
+        ALICE.updateTokenURI(URIs.alternativeURI);
+
+        // Drip to Bob
+        ALICE.drip(address(BOB));
+
+        // Ensure new URI for bobs tokens
+        for (uint256 i = 1; i <= 10; i++) {
+            assertEq(FAUCET.tokenURI(i), URIs.alternativeURI);
+        }
     }
 }

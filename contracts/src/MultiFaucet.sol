@@ -28,6 +28,8 @@ contract MultiFaucet is ERC721 {
 
     /// ============ Mutable storage ============
 
+    /// @notice Default NFT uri
+    string public URI;
     /// @notice Count of minted NFTs
     uint256 public nftsMinted;
     /// @notice Address of faucet super operator
@@ -79,11 +81,13 @@ contract MultiFaucet is ERC721 {
     /// @notice Creates a new MultiFaucet contract
     /// @param _DAI address of DAI contract
     /// @param _WETH address of wETH contract
-    constructor(address _DAI, address _WETH) 
+    /// @param _URI string of token URI
+    constructor(address _DAI, address _WETH, string memory _URI) 
         ERC721("MultiFaucet NFT", "MFNFT") 
     {
         DAI = IERC20(_DAI);
         WETH = IERC20(_WETH);
+        URI = _URI;
         superOperator = msg.sender;
     }
 
@@ -161,6 +165,20 @@ contract MultiFaucet is ERC721 {
         address old = superOperator;
         superOperator = _operator;
         emit SuperOperatorUpdated(old, superOperator);
+    }
+
+    /// @notice Override internal ERC721 function to return single image per NFT
+    /// @param tokenId of ERC721 NFT
+    function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
+        // OpenZeppelin check: ensure token exists
+        require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
+        return URI;
+    }
+
+    /// @notice Allows super operator to update NFT uri
+    /// @param _URI of collection
+    function updateTokenURI(string memory _URI) external isSuperOperator {
+        URI = _URI;
     }
 
     /// @notice Allows receiving ETH
