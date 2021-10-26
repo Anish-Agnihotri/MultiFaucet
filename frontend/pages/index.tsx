@@ -1,5 +1,6 @@
 import axios from "axios"; // Requests
 import { ethers } from "ethers"; // Address check
+import { toast } from "react-toastify"; // Toast notifications
 import Layout from "components/Layout"; // Layout wrapper
 import styles from "styles/Home.module.scss"; // Styles
 import { ReactElement, useState } from "react"; // Local state + types
@@ -42,16 +43,21 @@ export default function Home({
    * Processes a claim to the faucet
    */
   const processClaim = async () => {
+    // Toggle loading
     setLoading(true);
 
     try {
-      // TODO: Add response handling
-      const response = await axios.post("/api/claim/new", { address });
+      // Post new claim with recipient address
+      await axios.post("/api/claim/new", { address });
+      // Toast if success + toggle claimed
+      toast.success("Tokens dispersed—check balances shortly!");
       setClaimed(true);
-    } catch (e) {
-      console.error(e);
+    } catch (error: any) {
+      // If error, toast error message
+      toast.error(error.response.data.error);
     }
 
+    // Toggle loading
     setLoading(false);
   };
 
@@ -60,14 +66,14 @@ export default function Home({
       {/* CTA + description */}
       <div className={styles.home__cta}>
         <h1>Bootstrap your testnet wallet</h1>
-        <p>
+        <span>
           MultiFaucet funds a wallet with{" "}
           <TokenLogo name="ETH" imageSrc="/tokens/eth.png" />,{" "}
           <TokenLogo name="wETH" imageSrc="/tokens/weth.png" />,
           <TokenLogo name="DAI" imageSrc="/tokens/dai.svg" />, and{" "}
           <TokenLogo name="NFTs" imageSrc="/tokens/punks.png" /> across 8
           testnet networks, all at once.
-        </p>
+        </span>
       </div>
 
       {/* Claim from facuet card */}

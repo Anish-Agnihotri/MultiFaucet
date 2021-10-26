@@ -1,5 +1,5 @@
 import Redis from "ioredis"; // Redis
-import { ethers } from "ethers"; // Ethers (address check)
+import { ethers } from "ethers"; // Ethers
 import { getSession } from "next-auth/client"; // Session management
 import { hasClaimed } from "pages/api/claim/status"; // Claim status
 import type { NextApiRequest, NextApiResponse } from "next"; // Types
@@ -45,8 +45,7 @@ async function processDrips(recipient: string): Promise<void> {
 
     // Send drip transaction
     try {
-      // TODO: fix gas limit
-      await faucetContract.drip(recipient, { gasPrice, gasLimit: 400_000 });
+      await faucetContract.drip(recipient, { gasPrice, gasLimit: 250_000 });
     } catch {
       throw new Error(`Error when processing drip for network: ${networkId}`);
     }
@@ -69,7 +68,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(400).send({ error: "Invalid address." });
   }
 
-  const claimed: boolean = await hasClaimed(session.user.twitter_id);
+  const claimed: boolean = await hasClaimed(session.twitter_id);
   if (claimed) {
     // Return already claimed status
     return res.status(400).send({ error: "Already claimed in 24h window" });
