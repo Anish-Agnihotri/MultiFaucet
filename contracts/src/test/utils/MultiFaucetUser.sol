@@ -35,6 +35,11 @@ contract MultiFaucetUser is ERC721Holder {
 
     /// ============ Helper functions ============
 
+    /// @notice Returns ETH balance of user
+    function ETHBalance() public view returns (uint256) {
+        return address(this).balance;
+    }
+
     /// @notice Returns DAI balance of user
     function DAIBalance() public view returns (uint256) {
         return DAI.balanceOf(address(this));
@@ -47,7 +52,7 @@ contract MultiFaucetUser is ERC721Holder {
 
     /// @notice Returns NFT count of user
     function NFTBalance() public view returns (uint256) {
-        return MultiFaucet.balanceOf(address(this));
+        return FAUCET.balanceOf(address(this));
     }
 
     /// ============ Inherited Functionality ============
@@ -55,13 +60,13 @@ contract MultiFaucetUser is ERC721Holder {
     /// @notice Drips from faucet to recipient
     /// @param _recipient to drip to
     function drip(address _recipient) public {
-        MultiFaucet.drip(_recipient);
+        FAUCET.drip(_recipient);
     }
 
     /// @notice Drains faucet to a recipient address
     /// @param _recipient to drain to
     function drain(address _recipient) public {
-        MultiFaucet.drain(_recipient);
+        FAUCET.drain(_recipient);
     }
 
     /// @notice Adds or removes approved operator
@@ -71,13 +76,13 @@ contract MultiFaucetUser is ERC721Holder {
         address _operator, 
         bool _status
     ) public {
-        MultiFaucet.updateApprovedOperator(_operator, _status);
+        FAUCET.updateApprovedOperator(_operator, _status);
     }
 
     /// @notice Updates super operator
     /// @param _operator new super operator address
     function updateSuperOperator(address _operator) public {
-        MultiFaucet.updateSuperOperator(_operator);
+        FAUCET.updateSuperOperator(_operator);
     }
 
     /// @notice Allows receiving ETH

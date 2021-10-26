@@ -22,7 +22,7 @@ contract MultiFaucet is ERC721 {
     /// @notice ETH to disperse
     uint256 public constant ETH_AMOUNT = 5 ether;
     /// @notice DAI to disperse
-    uint256 public constant DAI_AMOUNT = 10_000e18;
+    uint256 public constant DAI_AMOUNT = 5_000e18;
     /// @notice wETH to disperse
     uint256 public constant WETH_AMOUNT = 5e18;
 
@@ -30,7 +30,7 @@ contract MultiFaucet is ERC721 {
 
     /// @notice Count of minted NFTs
     uint256 public nftsMinted;
-    /// @notice Address of faucet deployer
+    /// @notice Address of faucet super operator
     address public superOperator;
     /// @notice Addresses of approved faucet operators
     mapping(address => bool) public approvedOperators;
@@ -46,10 +46,33 @@ contract MultiFaucet is ERC721 {
 
     /// @notice Requires sender to be contract approved operator
     modifier isApprovedOperator() {
-        // Ensure sender is in approved operators
-        require(approvedOperators[msg.sender], "Not approved operator");
+        // Ensure sender is in approved operators or is super operator
+        require(
+            approvedOperators[msg.sender] || superOperator == msg.sender, 
+            "Not approved operator"
+        );
         _;
     }
+
+    /// ============ Events ============
+
+    /// @notice Emitted after faucet drips to a recipient
+    /// @param recipient address dripped to
+    event FaucetDripped(address indexed recipient);
+
+    /// @notice Emitted after faucet drained to a recipient
+    /// @param recipient address drained to
+    event FaucetDrained(address indexed recipient);
+
+    /// @notice Emitted after operator status is updated
+    /// @param operator address being updated
+    /// @param status new operator status
+    event OperatorUpdated(address indexed operator, bool status);
+
+    /// @notice Emitted after super operator is updated
+    /// @param old address of super operator
+    /// @param operator new address of super operator
+    event SuperOperatorUpdated(address indexed old, address indexed operator);
 
     /// ============ Constructor ============
 
@@ -61,6 +84,7 @@ contract MultiFaucet is ERC721 {
     {
         DAI = IERC20(_DAI);
         WETH = IERC20(_WETH);
+        superOperator = msg.sender;
     }
 
     /// ============ Functions ============
@@ -83,6 +107,8 @@ contract MultiFaucet is ERC721 {
             _mint(_recipient, nftsMinted + i);
         }
         nftsMinted += NFT_COUNT;
+
+        emit FaucetDripped(_recipient);
     }
 
     /// @notice Returns number of available drips by token
@@ -106,11 +132,13 @@ contract MultiFaucet is ERC721 {
 
         // Drain all DAI
         uint256 daiBalance = DAI.balanceOf(address(this));
-        require(DAI.transfer(_recipient, daiBalance), "Failed draining ETH");
+        require(DAI.transfer(_recipient, daiBalance), "Failed draining DAI");
 
         // Drain all wETH
         uint256 wethBalance = WETH.balanceOf(address(this));
         require(WETH.transfer(_recipient, wethBalance), "Failed dripping wETH");
+
+        emit FaucetDrained(_recipient);
     }
 
     /// @notice Allows super operator to update approved drip operator status
@@ -121,6 +149,7 @@ contract MultiFaucet is ERC721 {
         isSuperOperator 
     {
         approvedOperators[_operator] = _status;
+        emit OperatorUpdated(_operator, _status);
     }
 
     /// @notice Allows super operator to update super operator
@@ -129,6 +158,11 @@ contract MultiFaucet is ERC721 {
         external 
         isSuperOperator 
     {
+        address old = superOperator;
         superOperator = _operator;
+        emit SuperOperatorUpdated(old, superOperator);
     }
+
+    /// @notice Allows receiving ETH
+    receive() external payable {}
 }

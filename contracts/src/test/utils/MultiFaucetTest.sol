@@ -3,35 +3,41 @@ pragma solidity ^0.8.0;
 
 /// ============ Imports ============
 
-import "ds-test/test.sol"; // ds-test
+import "./DSTestExtended.sol"; // DSTestExtended
+import "./ERC20Mintable.sol"; // ERC20Mintable
 import "./MultiFaucetUser.sol"; // Faucet user
 import "../../MultiFaucet.sol"; // MultiFaucet
-import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol"; // OZ: ERC20
 
-contract MultiFaucetTest is DSTest {
+contract MultiFaucetTest is DSTestExtended {
 
     /// ============ Storage ============
 
-    ERC20 internal DAI;
-    ERC20 internal WETH;
+    /// @dev DAI token
+    ERC20Mintable internal DAI;
+    /// @dev wETH token
+    ERC20Mintable internal WETH;
+    /// @dev MultiFaucet contract
     MultiFaucet internal FAUCET;
+    /// @dev User: Alice (default super operator)
     MultiFaucetUser internal ALICE;
+    /// @dev User: Bob
     MultiFaucetUser internal BOB;
 
     /// ============ Setup test suite ============
 
     function setUp() public virtual {
         // Setup tokens
-        DAI = new ERC20("DAI Stablecoin", "DAI");
-        WETH = new ERC20("Wrapped Ether", "wETH");
+        DAI = new ERC20Mintable("DAI Stablecoin", "DAI");
+        WETH = new ERC20Mintable("Wrapped Ether", "wETH");
 
         // Create faucet
         FAUCET = new MultiFaucet(address(DAI), address(WETH));
 
         // Fund faucet
-        payable(address(FAUCET)).call{value: 100 ether}("");
-        DAI._mint(address(FAUCET), 10_000e18);
-        WETH._mint(address(FAUCET), 100e18);
+        (bool success, ) = payable(address(FAUCET)).call{value: 100 ether}("");
+        require(success, "Failed funding faucet with ETH");
+        DAI.mint(address(FAUCET), 100_000e18);
+        WETH.mint(address(FAUCET), 100e18);
 
         // Setup faucet users
         ALICE = new MultiFaucetUser(FAUCET, address(DAI), address(WETH));
