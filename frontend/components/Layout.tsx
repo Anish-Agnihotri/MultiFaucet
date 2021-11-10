@@ -36,6 +36,40 @@ function Head() {
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap"
         rel="stylesheet"
       />
+
+      {/* Primary Meta Tags */}
+      <title>Faucet.sh | Bootstrap your testnet wallet</title>
+      <meta name="title" content="Faucet.sh | Bootstrap your testnet wallet" />
+      <meta
+        name="description"
+        content="Fund a wallet with ETH, wETH, DAI, and NFTs across 4 testnet networks, at once."
+      />
+
+      {/* OG + Facebook */}
+      <meta property="og:type" content="website" />
+      <meta property="og:url" content="http://faucet.sh/" />
+      <meta
+        property="og:title"
+        content="Faucet.sh | Bootstrap your testnet wallet"
+      />
+      <meta
+        property="og:description"
+        content="Fund a wallet with ETH, wETH, DAI, and NFTs across 4 testnet networks, at once."
+      />
+      <meta property="og:image" content="https://faucet.sh/meta.png" />
+
+      {/* Twitter */}
+      <meta property="twitter:card" content="summary_large_image" />
+      <meta property="twitter:url" content="http://faucet.sh/" />
+      <meta
+        property="twitter:title"
+        content="Faucet.sh | Bootstrap your testnet wallet"
+      />
+      <meta
+        property="twitter:description"
+        content="Fund a wallet with ETH, wETH, DAI, and NFTs across 4 testnet networks, at once."
+      />
+      <meta property="twitter:image" content="https://faucet.sh/meta.png" />
     </HTMLHead>
   );
 }

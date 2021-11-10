@@ -176,3 +176,12 @@
     cursor: not-allowed;
   }
 }
+
+// Responsive
+@media screen and (max-width: 750px) {
+  .home__card {
+    p {
+      line-height: 24px;
+    }
+  }
+}
