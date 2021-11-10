@@ -10,8 +10,8 @@ It enables a super operator to `drip` and `drain` to a recipient, add approved o
 
 ```bash
 # Collect repo
-git clone https://github.com/anish-agnihotri/MultiFaucet
-cd MultiFaucet/contracts
+git clone https://github.com/anish-agnihotri/faucet.sh
+cd faucet.sh/contracts
 
 # Run tests
 make
@@ -40,7 +40,7 @@ curl https://dapp.tools/install | sh
 
 ## License
 
-[GNU Affero GPL v3.0](https://github.com/Anish-Agnihotri/MultiFaucet/blob/master/LICENSE)
+[GNU Affero GPL v3.0](https://github.com/Anish-Agnihotri/faucet.sh/blob/master/LICENSE)
 
 ## Credits
 
