@@ -67,12 +67,12 @@ export default function Home({
       <div className={styles.home__cta}>
         <h1>Bootstrap your testnet wallet</h1>
         <span>
-          MultiFaucet funds a wallet with{" "}
+          Faucet.sh funds a wallet with{" "}
           <TokenLogo name="ETH" imageSrc="/tokens/eth.png" />,{" "}
           <TokenLogo name="wETH" imageSrc="/tokens/weth.png" />,
           <TokenLogo name="DAI" imageSrc="/tokens/dai.svg" />, and{" "}
-          <TokenLogo name="NFTs" imageSrc="/tokens/punks.png" /> across 8
-          testnet networks, all at once.
+          <TokenLogo name="NFTs" imageSrc="/tokens/punks.png" /> across 4
+          testnet networks, at once.
         </span>
       </div>
 
@@ -91,7 +91,7 @@ export default function Home({
               {/* Reasoning for Twitter OAuth */}
               <p>
                 To prevent faucet botting, you must sign in with Twitter. We
-                request the strictest,{" "}
+                request{" "}
                 <a
                   href="https://developer.twitter.com/en/docs/apps/app-permissions"
                   target="_blank"
@@ -126,13 +126,12 @@ export default function Home({
                 <div className={styles.content__unclaimed}>
                   {/* Claimd description */}
                   <p>
-                    The faucet dispenses 5 ETH, 5 wETH, 10,000 DAI, and 5 NFTs
+                    The faucet drips 5 ETH, 5 wETH, 10,000 DAI, and 5 NFTs
                     (ERC721).
                   </p>
                   <p>
-                    You will receive these tokens across all Ethereum testnets
-                    (Rinkeby, Ropsten, Kovan, Görli), Optimistic Kovan, Arbitrum
-                    Kovan, and Polygon Mumbai.
+                    You will receive these tokens on Ropsten, Kovan, Görli, and
+                    Optimistic Kovan.
                   </p>
                   <p>You can claim from the faucet once every 24 hours.</p>
 
