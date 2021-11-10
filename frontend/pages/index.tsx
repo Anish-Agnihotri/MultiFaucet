@@ -67,7 +67,7 @@ export default function Home({
       <div className={styles.home__cta}>
         <h1>Bootstrap your testnet wallet</h1>
         <span>
-          Faucet.sh funds a wallet with{" "}
+          faucet.sh funds a wallet with{" "}
           <TokenLogo name="ETH" imageSrc="/tokens/eth.png" />,{" "}
           <TokenLogo name="wETH" imageSrc="/tokens/weth.png" />,
           <TokenLogo name="DAI" imageSrc="/tokens/dai.svg" />, and{" "}

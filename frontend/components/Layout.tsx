@@ -38,7 +38,7 @@ function Head() {
       />
 
       {/* Primary Meta Tags */}
-      <title>Faucet.sh | Bootstrap your testnet wallet</title>
+      <title>faucet.sh | Bootstrap your testnet wallet</title>
       <meta name="title" content="Faucet.sh | Bootstrap your testnet wallet" />
       <meta
         name="description"
@@ -50,7 +50,7 @@ function Head() {
       <meta property="og:url" content="http://faucet.sh/" />
       <meta
         property="og:title"
-        content="Faucet.sh | Bootstrap your testnet wallet"
+        content="faucet.sh | Bootstrap your testnet wallet"
       />
       <meta
         property="og:description"
@@ -63,7 +63,7 @@ function Head() {
       <meta property="twitter:url" content="http://faucet.sh/" />
       <meta
         property="twitter:title"
-        content="Faucet.sh | Bootstrap your testnet wallet"
+        content="faucet.sh | Bootstrap your testnet wallet"
       />
       <meta
         property="twitter:description"
