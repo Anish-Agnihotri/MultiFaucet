@@ -14,9 +14,6 @@ export default function Layout({
 
       {/* Layout sizer */}
       <div className={styles.layout__content}>{children}</div>
-
-      {/* Footer */}
-      <Footer />
     </div>
   );
 }
@@ -37,58 +34,51 @@ function Head() {
         rel="stylesheet"
       />
 
+      {/* Favicon */}
+      <link rel="shortcut icon" href="/favicon.ico" />
+
       {/* Primary Meta Tags */}
-      <title>faucet.sh | Bootstrap your testnet wallet</title>
-      <meta name="title" content="Faucet.sh | Bootstrap your testnet wallet" />
+      <title>Paradigm MultiFaucet | Bootstrap your testnet wallet</title>
+      <meta
+        name="title"
+        content="Paradigm MultiFaucet | Bootstrap your testnet wallet"
+      />
       <meta
         name="description"
-        content="Fund a wallet with ETH, wETH, DAI, and NFTs across 4 testnet networks, at once."
+        content="MultiFaucet funds a wallet with ETH, wETH, DAI, and NFTs across 4 testnet networks, at once."
       />
 
       {/* OG + Facebook */}
       <meta property="og:type" content="website" />
-      <meta property="og:url" content="http://faucet.sh/" />
+      <meta property="og:url" content="https://faucet.paradigm.xyz" />
       <meta
         property="og:title"
-        content="faucet.sh | Bootstrap your testnet wallet"
+        content="Paradigm MultiFaucet | Bootstrap your testnet wallet"
       />
       <meta
         property="og:description"
-        content="Fund a wallet with ETH, wETH, DAI, and NFTs across 4 testnet networks, at once."
+        content="MultiFaucet funds a wallet with ETH, wETH, DAI, and NFTs across 4 testnet networks, at once."
       />
-      <meta property="og:image" content="https://faucet.sh/meta.png" />
+      <meta
+        property="og:image"
+        content="https://faucet.paradigm.xyz/meta.png"
+      />
 
       {/* Twitter */}
       <meta property="twitter:card" content="summary_large_image" />
-      <meta property="twitter:url" content="http://faucet.sh/" />
+      <meta property="twitter:url" content="https://faucet.paradigm.xyz" />
       <meta
         property="twitter:title"
-        content="faucet.sh | Bootstrap your testnet wallet"
+        content="Paradigm MultiFaucet | Bootstrap your testnet wallet"
       />
       <meta
         property="twitter:description"
-        content="Fund a wallet with ETH, wETH, DAI, and NFTs across 4 testnet networks, at once."
+        content="MultiFaucet funds a wallet with ETH, wETH, DAI, and NFTs across 4 testnet networks, at once."
       />
-      <meta property="twitter:image" content="https://faucet.sh/meta.png" />
+      <meta
+        property="twitter:image"
+        content="https://faucet.paradigm.xyz/meta.png"
+      />
     </HTMLHead>
-  );
-}
-
-// Footer
-function Footer() {
-  return (
-    <div className={styles.layout__footer}>
-      <p>
-        A hack by{" "}
-        <a
-          href="https://anishagnihotri.com"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Anish Agnihotri
-        </a>
-        .
-      </p>
-    </div>
   );
 }

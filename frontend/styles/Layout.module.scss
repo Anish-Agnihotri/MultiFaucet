@@ -1,7 +1,7 @@
 // Main container
 .layout {
   max-width: 800px;
-  padding: 20px 20px;
+  padding: 20px 20px 50px 20px;
   margin: 0px auto;
   min-height: calc(100vh - 40px);
 
@@ -10,20 +10,5 @@
 
   > div {
     width: 100%;
-  }
-}
-
-// Bottom footer
-.layout__footer {
-  margin-top: auto;
-  text-align: center;
-
-  > p {
-    font-size: 14px;
-    color: rgb(93, 93, 93);
-
-    > a {
-      color: inherit;
-    }
   }
 }
