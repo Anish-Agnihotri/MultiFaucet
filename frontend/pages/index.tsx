@@ -81,7 +81,7 @@ export default function Home({
         </div>
         <h1>Bootstrap your testnet wallet</h1>
         <span>
-          Paradigm's faucet funds a wallet with{" "}
+          MultiFaucet funds a wallet with{" "}
           <TokenLogo name="ETH" imageSrc="/tokens/eth.png" />
           , <TokenLogo name="wETH" imageSrc="/tokens/weth.png" />,
           <TokenLogo name="DAI" imageSrc="/tokens/dai.svg" />, and{" "}
@@ -202,7 +202,7 @@ export default function Home({
           <div className={styles.home__card_content_section}>
             <h4>General Information</h4>
             <p>
-              The faucet drips 5 ETH, 5 wETH, 10,000 DAI, and 5 NFTs (ERC721).
+              The faucet drips 5 ETH, 5 wETH, 5,000 DAI, and 5 NFTs (ERC721).
             </p>
             <p>
               You will receive these tokens on Ropsten, Kovan, Görli, and
@@ -216,7 +216,7 @@ export default function Home({
         {ADDRESSES.map((network) => {
           // For each network
           return (
-            <div>
+            <div key={network.network}>
               <div className={styles.home__card_content_section}>
                 {/* Network name */}
                 <h4>
@@ -240,7 +240,7 @@ export default function Home({
                   // For each network address
                   return (
                     // Address description: address
-                    <p>
+                    <p key={name}>
                       {name}:{" "}
                       <TokenAddress
                         network={network.network}
@@ -283,6 +283,7 @@ function TokenAddress({
    * Adds token to MetaMask
    */
   const addToMetaMask = async () => {
+    // @ts-expect-error
     await window.ethereum.request({
       method: "wallet_watchAsset",
       params: {

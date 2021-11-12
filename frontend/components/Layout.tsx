@@ -38,14 +38,14 @@ function Head() {
       <link rel="shortcut icon" href="/favicon.ico" />
 
       {/* Primary Meta Tags */}
-      <title>Paradigm faucet | Bootstrap your testnet wallet</title>
+      <title>Paradigm MultiFaucet | Bootstrap your testnet wallet</title>
       <meta
         name="title"
-        content="Paradigm faucet | Bootstrap your testnet wallet"
+        content="Paradigm MultiFaucet | Bootstrap your testnet wallet"
       />
       <meta
         name="description"
-        content="Fund a wallet with ETH, wETH, DAI, and NFTs across 4 testnet networks, at once."
+        content="MultiFaucet funds a wallet with ETH, wETH, DAI, and NFTs across 4 testnet networks, at once."
       />
 
       {/* OG + Facebook */}
@@ -53,11 +53,11 @@ function Head() {
       <meta property="og:url" content="https://faucet.paradigm.xyz" />
       <meta
         property="og:title"
-        content="Paradigm faucet | Bootstrap your testnet wallet"
+        content="Paradigm MultiFaucet | Bootstrap your testnet wallet"
       />
       <meta
         property="og:description"
-        content="Fund a wallet with ETH, wETH, DAI, and NFTs across 4 testnet networks, at once."
+        content="MultiFaucet funds a wallet with ETH, wETH, DAI, and NFTs across 4 testnet networks, at once."
       />
       <meta
         property="og:image"
@@ -69,11 +69,11 @@ function Head() {
       <meta property="twitter:url" content="https://faucet.paradigm.xyz" />
       <meta
         property="twitter:title"
-        content="Paradigm faucet | Bootstrap your testnet wallet"
+        content="Paradigm MultiFaucet | Bootstrap your testnet wallet"
       />
       <meta
         property="twitter:description"
-        content="Fund a wallet with ETH, wETH, DAI, and NFTs across 4 testnet networks, at once."
+        content="MultiFaucet funds a wallet with ETH, wETH, DAI, and NFTs across 4 testnet networks, at once."
       />
       <meta
         property="twitter:image"
