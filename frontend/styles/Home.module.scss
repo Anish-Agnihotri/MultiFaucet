@@ -257,9 +257,44 @@
 
 // Responsive
 @media screen and (max-width: 750px) {
+  // Top CTA
+  .home__cta {
+    > h1 {
+      font-size: 2.3rem;
+    }
+
+    > span {
+      font-size: 17px;
+    }
+  }
+
+  // Card
   .home__card {
     p {
       line-height: 24px;
+    }
+  }
+
+  // Individual address containers
+  .address {
+    display: block;
+    margin-top: 5px;
+    padding-bottom: 10px;
+
+    > a {
+      display: block;
+      width: calc(100% - 0.8em);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    > button {
+      display: block;
+      padding: 0.4em;
+      margin-left: 0px;
+      margin-top: 5px;
+      width: 100%;
     }
   }
 }
