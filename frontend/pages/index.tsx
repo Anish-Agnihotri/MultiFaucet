@@ -1,7 +1,9 @@
 import axios from "axios"; // Requests
+import Image from "next/image"; // Image
 import { ethers } from "ethers"; // Address check
 import { toast } from "react-toastify"; // Toast notifications
 import Layout from "components/Layout"; // Layout wrapper
+import { ADDRESSES } from "utils/addresses"; // Faucet addresses
 import styles from "styles/Home.module.scss"; // Styles
 import { ReactElement, useState } from "react"; // Local state + types
 import { hasClaimed } from "pages/api/claim/status"; // Claim status
@@ -36,6 +38,8 @@ export default function Home({
   const [address, setAddress] = useState<string>("");
   // Claimed status
   const [claimed, setClaimed] = useState<boolean>(initialClaimed);
+  // First claim
+  const [firstClaim, setFirstClaim] = useState<boolean>(false);
   // Loading status
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -52,6 +56,7 @@ export default function Home({
       // Toast if success + toggle claimed
       toast.success("Tokens dispersed—check balances shortly!");
       setClaimed(true);
+      setFirstClaim(true);
     } catch (error: any) {
       // If error, toast error message
       toast.error(error.response.data.error);
@@ -65,11 +70,20 @@ export default function Home({
     <Layout>
       {/* CTA + description */}
       <div className={styles.home__cta}>
+        <div>
+          <a
+            href="https://paradigm.xyz"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Image src="/logo.svg" height="42.88px" width="180px" />
+          </a>
+        </div>
         <h1>Bootstrap your testnet wallet</h1>
         <span>
-          faucet.sh funds a wallet with{" "}
-          <TokenLogo name="ETH" imageSrc="/tokens/eth.png" />,{" "}
-          <TokenLogo name="wETH" imageSrc="/tokens/weth.png" />,
+          Paradigm's faucet funds a wallet with{" "}
+          <TokenLogo name="ETH" imageSrc="/tokens/eth.png" />
+          , <TokenLogo name="wETH" imageSrc="/tokens/weth.png" />,
           <TokenLogo name="DAI" imageSrc="/tokens/dai.svg" />, and{" "}
           <TokenLogo name="NFTs" imageSrc="/tokens/punks.png" /> across 4
           testnet networks, at once.
@@ -80,7 +94,7 @@ export default function Home({
       <div className={styles.home__card}>
         {/* Card title */}
         <div className={styles.home__card_title}>
-          <h3>{!session ? "Authenticate with Twitter" : "Request Tokens"}</h3>
+          <h3>Request Tokens</h3>
         </div>
 
         {/* Card content */}
@@ -107,7 +121,7 @@ export default function Home({
                 className={styles.button__main}
                 onClick={() => signIn("twitter")}
               >
-                Sign In
+                Sign In with Twitter
               </button>
             </div>
           ) : (
@@ -117,23 +131,25 @@ export default function Home({
                 // If user has already claimed once in 24h
                 <div className={styles.content__claimed}>
                   <p>
-                    You have already claimed tokens less than 24 hours ago.
-                    Please try again later.
+                    {firstClaim
+                      ? "You have successfully claimed tokens. You can request again in 24 hours."
+                      : "You have already claimed tokens today. Please try again in 24 hours."}
                   </p>
+
+                  <input
+                    type="text"
+                    placeholder="0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B"
+                    disabled
+                  />
+                  <button className={styles.button__main} disabled>
+                    Tokens Already Claimed
+                  </button>
                 </div>
               ) : (
                 // If user has not claimed in 24h
                 <div className={styles.content__unclaimed}>
-                  {/* Claimd description */}
-                  <p>
-                    The faucet drips 5 ETH, 5 wETH, 10,000 DAI, and 5 NFTs
-                    (ERC721).
-                  </p>
-                  <p>
-                    You will receive these tokens on Ropsten, Kovan, Görli, and
-                    Optimistic Kovan.
-                  </p>
-                  <p>You can claim from the faucet once every 24 hours.</p>
+                  {/* Claim description */}
+                  <p>Enter your Ethereum address to receive tokens:</p>
 
                   {/* Address input */}
                   <input
@@ -155,7 +171,9 @@ export default function Home({
                   ) : (
                     // Else, force fix
                     <button className={styles.button__main} disabled>
-                      {address === "" ? "Enter Address" : "Invalid Address"}
+                      {address === ""
+                        ? "Enter Valid Address"
+                        : "Invalid Address"}
                     </button>
                   )}
                 </div>
@@ -172,13 +190,123 @@ export default function Home({
         </div>
       </div>
 
-      {session && !claimed ? (
-        // If in claim phase, also show faucet balances
-        <div className={styles.home__balances}>
-          <p>Faucet address: {process.env.NEXT_PUBLIC_OPERATOR_ADDRESS}</p>
+      {/* Faucet details card */}
+      <div className={styles.home__card}>
+        {/* Card title */}
+        <div className={styles.home__card_title}>
+          <h3>Faucet Details</h3>
         </div>
-      ) : null}
+
+        {/* General information */}
+        <div>
+          <div className={styles.home__card_content_section}>
+            <h4>General Information</h4>
+            <p>
+              The faucet drips 5 ETH, 5 wETH, 10,000 DAI, and 5 NFTs (ERC721).
+            </p>
+            <p>
+              You will receive these tokens on Ropsten, Kovan, Görli, and
+              Optimistic Kovan.
+            </p>
+            <p>You can claim from the faucet once every 24 hours.</p>
+          </div>
+        </div>
+
+        {/* Network details */}
+        {ADDRESSES.map((network) => {
+          // For each network
+          return (
+            <div>
+              <div className={styles.home__card_content_section}>
+                {/* Network name */}
+                <h4>
+                  {network.formattedName}{" "}
+                  {network.connectionDetails ? (
+                    <span>
+                      (
+                      <a
+                        href={network.connectionDetails}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        connection details
+                      </a>
+                      )
+                    </span>
+                  ) : null}
+                </h4>
+
+                {Object.entries(network.addresses).map(([name, address]) => {
+                  // For each network address
+                  return (
+                    // Address description: address
+                    <p>
+                      {name}:{" "}
+                      <TokenAddress
+                        network={network.network}
+                        name={name}
+                        address={address}
+                        ERC20={name != "NFTs"}
+                      />
+                    </p>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </Layout>
+  );
+}
+
+/**
+ * Returns token address component
+ * @param {string} network of address
+ * @param {string?} name if displaying MM connect
+ * @param {string} address to display
+ * @param {string} ERC20 if asset is an ERC20
+ * @returns {ReactElement}
+ */
+function TokenAddress({
+  network,
+  name,
+  address,
+  ERC20,
+}: {
+  network: string;
+  name?: string;
+  address: string;
+  ERC20: boolean;
+}): ReactElement {
+  /**
+   * Adds token to MetaMask
+   */
+  const addToMetaMask = async () => {
+    await window.ethereum.request({
+      method: "wallet_watchAsset",
+      params: {
+        type: "ERC20",
+        options: {
+          address: address,
+          symbol: name,
+          decimals: 18,
+        },
+      },
+    });
+  };
+
+  return (
+    <span className={styles.address}>
+      <a
+        href={`https://${network}.etherscan.io/address/${address}`}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {ethers.utils.getAddress(address)}
+      </a>
+      {ERC20 ? <button onClick={addToMetaMask}>Add to MetaMask</button> : null}
+    </span>
   );
 }
 
