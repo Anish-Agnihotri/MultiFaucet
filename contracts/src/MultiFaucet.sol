@@ -17,14 +17,6 @@ contract MultiFaucet is ERC721 {
     IERC20 public immutable DAI;
     /// @notice wETH ERC20 token
     IERC20 public immutable WETH;
-    /// @notice Number of ERC721 NFTs to mint
-    uint256 public constant NFT_COUNT = 5;
-    /// @notice ETH to disperse
-    uint256 public constant ETH_AMOUNT = 5 ether;
-    /// @notice DAI to disperse
-    uint256 public constant DAI_AMOUNT = 5_000e18;
-    /// @notice wETH to disperse
-    uint256 public constant WETH_AMOUNT = 5e18;
 
     /// ============ Mutable storage ============
 
@@ -32,17 +24,25 @@ contract MultiFaucet is ERC721 {
     string public URI;
     /// @notice Count of minted NFTs
     uint256 public nftsMinted;
-    /// @notice Address of faucet super operator
-    address public superOperator;
-    /// @notice Addresses of approved faucet operators
+    /// @notice Number of ERC721 NFTs to mint
+    uint256 public NFT_COUNT = 5;
+    /// @notice ETH to disperse
+    uint256 public ETH_AMOUNT = 5e18;
+    /// @notice DAI to disperse
+    uint256 public DAI_AMOUNT = 5_000e18;
+    /// @notice wETH to disperse
+    uint256 public WETH_AMOUNT = 5e18;
+    /// @notice Addresses of approved operators
     mapping(address => bool) public approvedOperators;
+    /// @notice Addresses of super operators
+    mapping(address => bool) public superOperators;
 
     /// ============ Modifiers ============
 
     /// @notice Requires sender to be contract super operator
     modifier isSuperOperator() {
         // Ensure sender is super operator
-        require(msg.sender == superOperator, "Not super operator");
+        require(superOperators[msg.sender], "Not super operator");
         _;
     }
 
@@ -50,7 +50,7 @@ contract MultiFaucet is ERC721 {
     modifier isApprovedOperator() {
         // Ensure sender is in approved operators or is super operator
         require(
-            approvedOperators[msg.sender] || superOperator == msg.sender, 
+            approvedOperators[msg.sender] || superOperators[msg.sender], 
             "Not approved operator"
         );
         _;
@@ -72,9 +72,9 @@ contract MultiFaucet is ERC721 {
     event OperatorUpdated(address indexed operator, bool status);
 
     /// @notice Emitted after super operator is updated
-    /// @param old address of super operator
-    /// @param operator new address of super operator
-    event SuperOperatorUpdated(address indexed old, address indexed operator);
+    /// @param operator address being updated
+    /// @param status new operator status
+    event SuperOperatorUpdated(address indexed operator, bool status);
 
     /// ============ Constructor ============
 
@@ -88,7 +88,7 @@ contract MultiFaucet is ERC721 {
         DAI = IERC20(_DAI);
         WETH = IERC20(_WETH);
         URI = _URI;
-        superOperator = msg.sender;
+        superOperators[msg.sender] = true;
     }
 
     /// ============ Functions ============
@@ -158,13 +158,13 @@ contract MultiFaucet is ERC721 {
 
     /// @notice Allows super operator to update super operator
     /// @param _operator address to update
-    function updateSuperOperator(address _operator) 
-        external 
-        isSuperOperator 
+    /// @param _status of operator to toggle (true === is super operator)
+    function updateSuperOperator(address _operator, bool _status) 
+        external
+        isSuperOperator
     {
-        address old = superOperator;
-        superOperator = _operator;
-        emit SuperOperatorUpdated(old, superOperator);
+        superOperators[_operator] = _status;
+        emit SuperOperatorUpdated(_operator, _status);
     }
 
     /// @notice Override internal ERC721 function to return single image per NFT
@@ -179,6 +179,23 @@ contract MultiFaucet is ERC721 {
     /// @param _URI of collection
     function updateTokenURI(string memory _URI) external isSuperOperator {
         URI = _URI;
+    }
+
+    /// @notice Allows super operator to update drip amounts
+    /// @param _nftCount number of NFTs to mint per drip
+    /// @param _ethAmount ETH to drip
+    /// @param _daiAmount DAI to drip
+    /// @param _wethAmount wETH to drip
+    function updateDripAmounts(
+        uint256 _nftCount, 
+        uint256 _ethAmount,
+        uint256 _daiAmount,
+        uint256 _wethAmount
+    ) external isSuperOperator {
+        NFT_COUNT = _nftCount;
+        ETH_AMOUNT = _ethAmount;
+        DAI_AMOUNT = _daiAmount;
+        WETH_AMOUNT = _wethAmount;
     }
 
     /// @notice Allows receiving ETH

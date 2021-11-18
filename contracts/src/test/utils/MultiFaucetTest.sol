@@ -44,6 +44,6 @@ contract MultiFaucetTest is DSTestExtended {
         BOB = new MultiFaucetUser(FAUCET, address(DAI), address(WETH));
 
         // Make Alice superOperator
-        FAUCET.updateSuperOperator(address(ALICE));
+        FAUCET.updateSuperOperator(address(ALICE), true);
     }
 }

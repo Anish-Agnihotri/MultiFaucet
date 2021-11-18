@@ -80,15 +80,35 @@ contract MultiFaucetUser is ERC721Holder {
     }
 
     /// @notice Updates super operator
-    /// @param _operator new super operator address
-    function updateSuperOperator(address _operator) public {
-        FAUCET.updateSuperOperator(_operator);
+    /// @param _operator address
+    /// @param _status of operator
+    function updateSuperOperator(address _operator, bool _status) public {
+        FAUCET.updateSuperOperator(_operator, _status);
     }
 
     /// @notice Updates token collection URI
     /// @param _URI new collection URI
     function updateTokenURI(string memory _URI) public {
         FAUCET.updateTokenURI(_URI);
+    }
+
+    /// @notice Updates drip amounts
+    /// @param _nftCount number of NFTs to mint per drip
+    /// @param _ethAmount ETH to drip
+    /// @param _daiAmount DAI to drip
+    /// @param _wethAmount wETH to drip
+    function updateDripAmounts(
+        uint256 _nftCount, 
+        uint256 _ethAmount,
+        uint256 _daiAmount,
+        uint256 _wethAmount
+    ) public {
+        FAUCET.updateDripAmounts(
+            _nftCount, 
+            _ethAmount, 
+            _daiAmount, 
+            _wethAmount
+        );
     }
 
     /// @notice Allows receiving ETH

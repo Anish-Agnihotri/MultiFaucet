@@ -84,11 +84,14 @@ contract Tests is MultiFaucetTest {
 
     /// @notice Can update super operator
     function testUpdateSuperOperator() public {
-        // Alice gives up super operatorship to BOB
-        ALICE.updateSuperOperator(address(BOB));
+        // Alice gives super operatorship to BOB
+        ALICE.updateSuperOperator(address(BOB), true);
 
-        // Verify Bob is now super operator
-        assertEq(FAUCET.superOperator(), address(BOB));
+        // Verify Bob is now a super operator
+        assertTrue(FAUCET.superOperators(address(BOB)));
+
+        // Alice removes her super operatorship
+        ALICE.updateSuperOperator(address(ALICE), false);
 
         // Alice can no longer drip
         assertErrorFunctionWithAddress(
@@ -105,9 +108,10 @@ contract Tests is MultiFaucetTest {
         ALICE.drip(address(BOB));
 
         // Alice can still not update super operator
-        assertErrorFunctionWithAddress(
+        assertErrorFunctionWithAddressAndBool(
             ALICE.updateSuperOperator,
             address(ALICE),
+            true,
             Errors.NotSuperOperator
         );
     }
@@ -166,5 +170,26 @@ contract Tests is MultiFaucetTest {
         for (uint256 i = 1; i <= 10; i++) {
             assertEq(FAUCET.tokenURI(i), URIs.alternativeURI);
         }
+    }
+
+    /// @notice Allows super operators to update drip amounts
+    function testAllowsUpdatingDripAmounts() public {
+        // Bob before balances
+        uint256 bobETHBalanceBefore = BOB.ETHBalance();
+        uint256 bobDAIBalanceBefore = BOB.DAIBalance();
+        uint256 bobWETHBalanceBefore = BOB.WETHBalance();
+        uint256 bobNFTCountBefore = BOB.NFTBalance();
+
+        // Alice updates drip amounts
+        ALICE.updateDripAmounts(1, 1e18, 1000e18, 1e18);
+
+        // Alice drips to bob
+        ALICE.drip(address(BOB));
+
+        // Bob after balances
+        assertEq(BOB.ETHBalance(), bobETHBalanceBefore + 1 ether);
+        assertEq(BOB.DAIBalance(), bobDAIBalanceBefore + 1_000e18);
+        assertEq(BOB.WETHBalance(), bobWETHBalanceBefore + 1e18);
+        assertEq(BOB.NFTBalance(), bobNFTCountBefore + 1);
     }
 }
