@@ -18,40 +18,97 @@ const rpcNetworks: Record<number, string> = {
   //421611: "arb-rinkeby.g.alchemy.com",
 };
 
-async function processDrips(recipient: string, nonce: number): Promise<void> {
-  // Loop through networks
-  for (const [networkId, rpcUrl] of Object.entries(rpcNetworks)) {
-    // Setup rpc provider for network
-    const rpcProvider = new ethers.providers.JsonRpcProvider(
-      `https://${rpcUrl}/v2/${process.env.ALCHEMY_API_KEY}`
+// Setup faucet interface
+const iface = new ethers.utils.Interface([
+  "function drip(address _recipient) external",
+]);
+
+/**
+ * Generates tx input data for drip claim
+ * @param {string} recipient address
+ * @returns {string} encoded input data
+ */
+function generateTxData(recipient: string): string {
+  // Encode address for drip function
+  return iface.encodeFunctionData("drip", [recipient]);
+}
+
+/**
+ * Collects StaticJsonRpcProvider by network
+ * @param {number} network id
+ * @returns {ethers.providers.StaticJsonRpcProvider} provider
+ */
+function getProviderByNetwork(
+  network: number
+): ethers.providers.StaticJsonRpcProvider {
+  // Collect alchemy RPC URL
+  const rpcUrl = rpcNetworks[network];
+
+  // Return setup static provider
+  return new ethers.providers.StaticJsonRpcProvider(
+    `https://${rpcUrl}/v2/${process.env.ALCHEMY_API_KEY}`
+  );
+}
+
+/**
+ * Collects nonce by network (cache first)
+ * @param {number} network id
+ * @returns {Promise<number>} network account nonce
+ */
+async function getNonceByNetwork(network: number): Promise<number> {
+  // Collect nonce from redis
+  const redisNonce: string | null = await client.get(`nonce-${network}`);
+
+  // If no redis nonce
+  if (redisNonce == null) {
+    // Update to last network nonce
+    const provider = getProviderByNetwork(network);
+    return await provider.getTransactionCount(
+      // Collect nonce for operator
+      process.env.NEXT_PUBLIC_OPERATOR_ADDRESS ?? ""
     );
+  } else {
+    // Else, return cached nonce
+    return Number(redisNonce);
+  }
+}
 
-    // Setup wallet with network rpc provider
-    const operatorWallet = new ethers.Wallet(
-      process.env.OPERATOR_PRIVATE_KEY ?? "",
-      rpcProvider
-    );
+/**
+ * Returns populated drip transaction for a network
+ * @param {ethers.Wallet} wallet without RPC network connected
+ * @param {number} network id
+ * @param {string} data input for tx
+ */
+async function processDrip(
+  wallet: ethers.Wallet,
+  network: number,
+  data: string
+): Promise<void> {
+  // Collect provider
+  const provider = getProviderByNetwork(network);
 
-    // Setup faucet contract
-    const faucetContract = new ethers.Contract(
-      process.env.FAUCET_ADDRESS ?? "",
-      ["function drip(address _recipient) external"],
-      operatorWallet
-    );
+  // Connect wallet to network
+  const rpcWallet = wallet.connect(provider);
+  // Collect nonce for network
+  const nonce = await getNonceByNetwork(network);
+  // Collect gas price * 2 for network
+  const gasPrice = (await provider.getGasPrice()).mul(2);
 
-    // Get gas price of network * 2
-    const gasPrice = (await rpcProvider.getGasPrice()).mul(2);
+  // Update nonce for network in redis w/ 5m ttl
+  await client.set(`nonce-${network}`, nonce + 1, "EX", 300);
 
-    // Send drip transaction
-    try {
-      await faucetContract.drip(recipient, {
-        gasPrice,
-        gasLimit: 500_000, // Arbitrary extra, should take ~350k max
-        nonce,
-      });
-    } catch (e) {
-      throw new Error(`Error when processing drip for network: ${networkId}`);
-    }
+  // Return populated transaction
+  try {
+    await rpcWallet.sendTransaction({
+      to: process.env.FAUCET_ADDRESS ?? "",
+      from: wallet.address,
+      gasPrice,
+      gasLimit: 500_000,
+      data,
+      nonce,
+    });
+  } catch {
+    throw new Error(`Error when processing drip for network ${network}`);
   }
 }
 
@@ -77,35 +134,26 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(400).send({ error: "Already claimed in 24h window" });
   }
 
-  // Collect nonce
-  let nonce: number;
-  const redisNonce: string | null = await client.get("nonce");
-  if (redisNonce == null) {
-    // If no nonce, update to last Ropsten nonce
-    const rpcProvider = new ethers.providers.JsonRpcProvider(
-      `https://eth-ropsten.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`
-    );
-    nonce = await rpcProvider.getTransactionCount(
-      // Collect nonce for operator
-      process.env.NEXT_PUBLIC_OPERATOR_ADDRESS ?? ""
-    );
-  } else {
-    nonce = Number(redisNonce);
-  }
+  // Setup wallet w/o RPC provider
+  const wallet = new ethers.Wallet(process.env.OPERATOR_PRIVATE_KEY ?? "");
 
-  try {
-    // Process new faucet claim
-    await processDrips(address, nonce);
-  } catch (e) {
-    // If error in process, revert
-    return res.status(500).send({ error: "Error claiming or faucet empty" });
-  }
+  // Generate transaction data
+  const data: string = generateTxData(address);
 
-  // Update nonce
-  nonce++;
-  await client.set("nonce", nonce);
+  // For each network
+  for (const networkId of Object.keys(rpcNetworks)) {
+    try {
+      // Process faucet claims
+      await processDrip(wallet, Number(networkId), data);
+    } catch {
+      // If error in process, revert
+      return res
+        .status(500)
+        .send({ error: "Error claiming, try again in 5 minutes." });
+    }
+  }
 
   // Update 24h claim status
-  await client.set(session.twitter_id, "true", "EX", "86400");
+  await client.set(session.twitter_id, "true", "EX", 86400);
   return res.status(200).send({ claimed: address });
 };
