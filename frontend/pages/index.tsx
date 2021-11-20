@@ -201,9 +201,7 @@ export default function Home({
         <div>
           <div className={styles.home__card_content_section}>
             <h4>General Information</h4>
-            <p>
-              The faucet drips 5 ETH, 5 wETH, 5,000 DAI, and 5 NFTs (ERC721).
-            </p>
+            <p>The faucet drips 1 ETH, 1 wETH, 500 DAI, and 5 NFTs (ERC721).</p>
             <p>
               You will receive these tokens on Ropsten, Kovan, Görli, and
               Optimistic Kovan.
