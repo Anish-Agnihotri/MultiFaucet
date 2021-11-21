@@ -1,5 +1,6 @@
 import Redis from "ioredis"; // Redis
 import { ethers } from "ethers"; // Ethers
+import { isValidInput } from "pages/index"; // Address check
 import { getSession } from "next-auth/client"; // Session management
 import { hasClaimed } from "pages/api/claim/status"; // Claim status
 import type { NextApiRequest, NextApiResponse } from "next"; // Types
@@ -123,9 +124,33 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(401).send({ error: "Not authenticated." });
   }
 
-  if (!address || !ethers.utils.getAddress(address)) {
+  if (!address || !isValidInput(address)) {
     // Return invalid address status
     return res.status(400).send({ error: "Invalid address." });
+  }
+
+  // Collect address
+  let addr: string = address;
+  // If address is ENS name
+  if (~address.toLowerCase().indexOf(".eth")) {
+    // Setup custom mainnet provider
+    const provider = new ethers.providers.StaticJsonRpcProvider(
+      `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`
+    );
+
+    // Collect 0x address from ENS
+    const resolvedAddress = await provider.resolveName(address);
+
+    // If no resolver set
+    if (!resolvedAddress) {
+      // Return invalid ENS status
+      return res
+        .status(400)
+        .send({ error: "Invalid ENS name. No reverse record." });
+    }
+
+    // Else, set address
+    addr = resolvedAddress;
   }
 
   const claimed: boolean = await hasClaimed(session.twitter_id);
@@ -138,7 +163,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const wallet = new ethers.Wallet(process.env.OPERATOR_PRIVATE_KEY ?? "");
 
   // Generate transaction data
-  const data: string = generateTxData(address);
+  const data: string = generateTxData(addr);
 
   // For each network
   for (const networkId of Object.keys(rpcNetworks)) {

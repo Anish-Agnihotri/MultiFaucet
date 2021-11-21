@@ -27,6 +27,21 @@ function isValidAddress(address: string): boolean {
   return true;
 }
 
+/**
+ * Checks if a provider address or ENS name is valid
+ * @param {string} address to check
+ * @returns {boolean} validity
+ */
+export function isValidInput(address: string): boolean {
+  // Check if ENS name
+  if (~address.toLowerCase().indexOf(".eth")) {
+    return true;
+  }
+
+  // Else, check if valid general address
+  return isValidAddress(address);
+}
+
 export default function Home({
   session,
   claimed: initialClaimed,
@@ -159,7 +174,7 @@ export default function Home({
                     onChange={(e) => setAddress(e.target.value)}
                   />
 
-                  {isValidAddress(address) ? (
+                  {isValidInput(address) ? (
                     // If address is valid, allow claiming
                     <button
                       className={styles.button__main}
