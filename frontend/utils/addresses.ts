@@ -22,7 +22,7 @@ export const ADDRESSES = [
   },
   {
     network: "rinkeby",
-    diclaimer: "Faucet drips 100 DAI instead of 500 DAI.",
+    disclaimer: "Faucet drips 100 DAI instead of 500 DAI.",
     etherscanPrefix: "rinkeby.etherscan.io",
     formattedName: "Rinkeby",
     addresses: {
