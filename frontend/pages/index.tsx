@@ -250,6 +250,9 @@ export default function Home({
                   ) : null}
                 </h4>
 
+                {/* Optional network disclaimer */}
+                {network.disclaimer ? <span>{network.disclaimer}</span> : null}
+
                 {Object.entries(network.addresses).map(([name, address]) => {
                   // For each network address
                   return (

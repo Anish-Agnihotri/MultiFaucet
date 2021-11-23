@@ -22,6 +22,7 @@ export const ADDRESSES = [
   },
   {
     network: "rinkeby",
+    diclaimer: "Faucet drips 100 DAI instead of 500 DAI.",
     etherscanPrefix: "rinkeby.etherscan.io",
     formattedName: "Rinkeby",
     addresses: {
@@ -54,6 +55,7 @@ export const ADDRESSES = [
   },
   {
     network: "mumbai",
+    disclaimer: "Faucet drips MATIC and wMATIC instead of ETH and wETH.",
     etherscanPrefix: "mumbai.polygonscan.com",
     formattedName: "Polygon Mumbai",
     connectionDetails:
@@ -66,6 +68,7 @@ export const ADDRESSES = [
   },
   {
     network: "arb-rinkeby",
+    disclaimer: "Faucet drips 100 DAI instead of 500 DAI.",
     etherscanPrefix: "testnet.arbiscan.io",
     formattedName: "Arbitrum Rinkeby",
     connectionDetails: "https://developer.offchainlabs.com/docs/public_testnet",
@@ -77,6 +80,7 @@ export const ADDRESSES = [
   },
   {
     network: "avalanche-fuji",
+    disclaimer: "Faucet drips 0.1 AVAX and 0.1 wAVAX instead of ETH and wETH.",
     etherscanPrefix: "testnet.snowtrace.io",
     formattedName: "Avalanche Fuji",
     connectionDetails:
