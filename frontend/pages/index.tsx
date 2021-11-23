@@ -245,6 +245,11 @@ export default function Home({
                       >
                         connection details
                       </a>
+                      ,
+                      {network.autoconnect ? (
+                        // Display network add button if non-default network
+                        <AddNetworkButton autoconnect={network.autoconnect} />
+                      ) : null}
                       )
                     </span>
                   ) : null}
@@ -274,6 +279,30 @@ export default function Home({
         })}
       </div>
     </Layout>
+  );
+}
+
+/**
+ * Returns button to add network to MetaMask
+ * @param {temp: any} autoconnect details
+ * @returns {ReactElement}
+ */
+function AddNetworkButton({ autoconnect }: { autoconnect: any }): ReactElement {
+  /**
+   * Adds network to MetaMask
+   */
+  const addToMetaMask = async () => {
+    // @ts-expect-error
+    await window.ethereum.request({
+      method: "wallet_addEthereumChain",
+      params: [autoconnect],
+    });
+  };
+
+  return (
+    <button onClick={addToMetaMask} className={styles.addNetworkButton}>
+      Add to MetaMask
+    </button>
   );
 }
 

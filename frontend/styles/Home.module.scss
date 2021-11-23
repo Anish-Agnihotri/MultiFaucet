@@ -27,6 +27,22 @@
   }
 }
 
+// Add network button
+.addNetworkButton {
+  padding: 0px;
+  background-color: transparent;
+  border: none;
+  margin-left: 2px;
+  font-weight: 500;
+  font-size: 16px;
+  text-decoration: underline;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
 // Individual address containers
 .address {
   > a {

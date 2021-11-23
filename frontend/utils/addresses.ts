@@ -47,6 +47,17 @@ export const ADDRESSES = [
     formattedName: "Optimistic Kovan",
     connectionDetails:
       "https://community.optimism.io/docs/infra/networks.html#optimistic-kovan",
+    autoconnect: {
+      chainId: "0x45",
+      chainName: "Optimistic Kovan",
+      nativeCurrency: {
+        name: "Ethereum",
+        symbol: "ETH",
+        decimals: 18,
+      },
+      rpcUrls: ["https://kovan.optimism.io"],
+      blockExplorerUrls: ["https://kovan-optimistic.etherscan.io/"],
+    },
     addresses: {
       NFTs: "0xf5de760f2e916647fd766b4ad9e85ff943ce3a2b",
       wETH: "0xbc6f6b680bc61e30db47721c6d1c5cde19c1300d",
@@ -60,6 +71,17 @@ export const ADDRESSES = [
     formattedName: "Polygon Mumbai",
     connectionDetails:
       "https://blog.pods.finance/guide-connecting-mumbai-testnet-to-your-metamask-87978071aca8",
+    autoconnect: {
+      chainId: "0x13881",
+      chainName: "Polygon Mumbai",
+      nativeCurrency: {
+        name: "MATIC",
+        symbol: "MATIC",
+        decimals: 18,
+      },
+      rpcUrls: ["https://rpc-mumbai.maticvigil.com/"],
+      blockExplorerUrls: ["https://mumbai.polygonscan.com/"],
+    },
     addresses: {
       NFTs: "0xf5de760f2e916647fd766b4ad9e85ff943ce3a2b",
       wETH: "0x9c3c9283d3e44854697cd22d3faa240cfb032889",
@@ -72,6 +94,17 @@ export const ADDRESSES = [
     etherscanPrefix: "testnet.arbiscan.io",
     formattedName: "Arbitrum Rinkeby",
     connectionDetails: "https://developer.offchainlabs.com/docs/public_testnet",
+    autoconnect: {
+      chainId: "0x66eeb",
+      chainName: "Arbitrum Testnet",
+      nativeCurrency: {
+        name: "Ethereum",
+        symbol: "ETH",
+        decimals: 18,
+      },
+      rpcUrls: ["https://rinkeby.arbitrum.io/rpc"],
+      blockExplorerUrls: ["https://testnet.arbiscan.io/"],
+    },
     addresses: {
       NFTs: "0xf5de760f2e916647fd766b4ad9e85ff943ce3a2b",
       wETH: "0xebbc3452cc911591e4f18f3b36727df45d6bd1f9",
@@ -85,6 +118,17 @@ export const ADDRESSES = [
     formattedName: "Avalanche Fuji",
     connectionDetails:
       "https://docs.avax.network/build/tutorials/smart-contracts/deploy-a-smart-contract-on-avalanche-using-remix-and-metamask#step-1-setting-up-metamask",
+    autoconnect: {
+      chainId: "0xa869",
+      chainName: "Avalanche FUJI C-Chain",
+      nativeCurrency: {
+        name: "Avalanche",
+        symbol: "AVAX",
+        decimals: 18,
+      },
+      rpcUrls: ["https://api.avax-test.network/ext/bc/C/rpc"],
+      blockExplorerUrls: ["https://testnet.snowtrace.io/"],
+    },
     addresses: {
       NFTs: "0xf5de760f2e916647fd766b4ad9e85ff943ce3a2b",
       wETH: "0xd00ae08403b9bbb9124bb305c09058e32c39a48c",
