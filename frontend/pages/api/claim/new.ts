@@ -9,14 +9,17 @@ import type { NextApiRequest, NextApiResponse } from "next"; // Types
 const client = new Redis(process.env.REDIS_URL);
 
 // Setup networks
+const ARBITRUM: number = 421611;
+const AVALANCHE_FUJI: number = 43113;
 const rpcNetworks: Record<number, string> = {
   3: "eth-ropsten.alchemyapi.io",
-  //4: "eth-rinkeby.alchemyapi.io",
+  4: "eth-rinkeby.alchemyapi.io",
   5: "eth-goerli.alchemyapi.io",
   42: "eth-kovan.alchemyapi.io",
   69: "opt-kovan.g.alchemy.com",
-  //80001: "polygon-mumbai.g.alchemy.com",
-  //421611: "arb-rinkeby.g.alchemy.com",
+  80001: "polygon-mumbai.g.alchemy.com",
+  421611: "arb-rinkeby.g.alchemy.com",
+  43113: "https://api.avax-test.network/ext/bc/C/rpc",
 };
 
 // Setup faucet interface
@@ -47,7 +50,12 @@ function getProviderByNetwork(
 
   // Return setup static provider
   return new ethers.providers.StaticJsonRpcProvider(
-    `https://${rpcUrl}/v2/${process.env.ALCHEMY_API_KEY}`
+    // If network is Avalanche
+    network === AVALANCHE_FUJI
+      ? // Return custom RPC
+        rpcUrl
+      : // Else, setup Alchemy RPC
+        `https://${rpcUrl}/v2/${process.env.ALCHEMY_API_KEY}`
   );
 }
 
@@ -104,11 +112,13 @@ async function processDrip(
       to: process.env.FAUCET_ADDRESS ?? "",
       from: wallet.address,
       gasPrice,
-      gasLimit: 500_000,
+      // Custom gas override for Arbitrum w/ min gas limit
+      gasLimit: network === ARBITRUM ? 5_000_000 : 500_000,
       data,
       nonce,
     });
-  } catch {
+  } catch (e) {
+    console.log(e);
     throw new Error(`Error when processing drip for network ${network}`);
   }
 }
@@ -170,7 +180,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     try {
       // Process faucet claims
       await processDrip(wallet, Number(networkId), data);
-    } catch {
+    } catch (e) {
+      console.log(e);
       // If error in process, revert
       return res
         .status(500)

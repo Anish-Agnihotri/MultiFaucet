@@ -100,7 +100,7 @@ export default function Home({
           <TokenLogo name="ETH" imageSrc="/tokens/eth.png" />
           , <TokenLogo name="wETH" imageSrc="/tokens/weth.png" />,
           <TokenLogo name="DAI" imageSrc="/tokens/dai.svg" />, and{" "}
-          <TokenLogo name="NFTs" imageSrc="/tokens/punks.png" /> across 4
+          <TokenLogo name="NFTs" imageSrc="/tokens/punks.png" /> across 8
           testnet networks, at once.
         </span>
       </div>
@@ -217,9 +217,10 @@ export default function Home({
           <div className={styles.home__card_content_section}>
             <h4>General Information</h4>
             <p>The faucet drips 1 ETH, 1 wETH, 500 DAI, and 5 NFTs (ERC721).</p>
-            <p>
-              You will receive these tokens on Ropsten, Kovan, Görli, and
-              Optimistic Kovan.
+            <p className={styles.home__card_content_section_lh}>
+              You will receive these tokens on Ropsten, Kovan, Rinkeby, Görli,
+              Optimistic Kovan, Arbitrum Rinkeby, Polygon Mumbai, and Avalanche
+              Fuji.
             </p>
             <p>You can claim from the faucet once every 24 hours.</p>
           </div>
@@ -256,7 +257,7 @@ export default function Home({
                     <p key={name}>
                       {name}:{" "}
                       <TokenAddress
-                        network={network.network}
+                        etherscanPrefix={network.etherscanPrefix}
                         name={name}
                         address={address}
                         ERC20={name != "NFTs"}
@@ -275,19 +276,19 @@ export default function Home({
 
 /**
  * Returns token address component
- * @param {string} network of address
+ * @param {string} etherscanPrefix of address
  * @param {string?} name if displaying MM connect
  * @param {string} address to display
  * @param {string} ERC20 if asset is an ERC20
  * @returns {ReactElement}
  */
 function TokenAddress({
-  network,
+  etherscanPrefix,
   name,
   address,
   ERC20,
 }: {
-  network: string;
+  etherscanPrefix: string;
   name?: string;
   address: string;
   ERC20: boolean;
@@ -313,7 +314,7 @@ function TokenAddress({
   return (
     <span className={styles.address}>
       <a
-        href={`https://${network}.etherscan.io/address/${address}`}
+        href={`https://${etherscanPrefix}/address/${address}`}
         target="_blank"
         rel="noopener noreferrer"
       >
