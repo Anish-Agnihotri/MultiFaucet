@@ -3,6 +3,7 @@ import Image from "next/image"; // Image
 import { ethers } from "ethers"; // Address check
 import { toast } from "react-toastify"; // Toast notifications
 import Layout from "components/Layout"; // Layout wrapper
+import { useRouter } from "next/router"; // Router
 import styles from "styles/Home.module.scss"; // Styles
 import { ReactElement, useState } from "react"; // Local state + types
 import { getAddressDetails } from "utils/addresses"; // Faucet addresses
@@ -49,8 +50,15 @@ export default function Home({
   session: any;
   claimed: boolean;
 }) {
+  // Collect prefilled address
+  const {
+    query: { addr },
+  } = useRouter();
+  // Fill prefilled address
+  const prefilledAddress: string = addr && typeof addr === "string" ? addr : "";
+
   // Claim address
-  const [address, setAddress] = useState<string>("");
+  const [address, setAddress] = useState<string>(prefilledAddress);
   // Claimed status
   const [claimed, setClaimed] = useState<boolean>(initialClaimed);
   // First claim
