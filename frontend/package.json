@@ -11,6 +11,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@slack/web-api": "^6.5.1",
     "axios": "^0.24.0",
     "ethers": "^5.4.7",
     "ioredis": "^4.28.0",

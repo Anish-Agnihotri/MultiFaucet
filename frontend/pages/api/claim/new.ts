@@ -1,5 +1,6 @@
 import Redis from "ioredis"; // Redis
 import { ethers } from "ethers"; // Ethers
+import { WebClient } from "@slack/web-api"; // Slack
 import { isValidInput } from "pages/index"; // Address check
 import { getSession } from "next-auth/client"; // Session management
 import { hasClaimed } from "pages/api/claim/status"; // Claim status
@@ -10,6 +11,20 @@ const whitelist: string[] = ["1078014622525988864"];
 
 // Setup redis client
 const client = new Redis(process.env.REDIS_URL);
+
+// Setup slack client
+const slack = new WebClient(process.env.SLACK_ACCESS_TOKEN);
+const slackChannel: string = process.env.SLACK_CHANNEL ?? "";
+/**
+ * Post message to slack channel
+ * @param {string} message to post
+ */
+async function postSlackMessage(message: string): Promise<void> {
+  await slack.chat.postMessage({
+    channel: slackChannel,
+    text: message,
+  });
+}
 
 /**
  * Generate Alchemy RPC endpoint url from partials
@@ -123,6 +138,9 @@ async function processDrip(
     });
   } catch (e) {
     console.log(e);
+    await postSlackMessage(
+      `Error dripping for ${provider.network.chainId}, ${String(e)}`
+    );
     throw new Error(`Error when processing drip for network ${network}`);
   }
 }
