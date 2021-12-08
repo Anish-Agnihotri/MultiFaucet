@@ -5,20 +5,32 @@ import { getSession } from "next-auth/client"; // Session management
 import { hasClaimed } from "pages/api/claim/status"; // Claim status
 import type { NextApiRequest, NextApiResponse } from "next"; // Types
 
+// Setup whitelist (Anish)
+const whitelist: string[] = ["1078014622525988864"];
+
 // Setup redis client
 const client = new Redis(process.env.REDIS_URL);
 
+/**
+ * Generate Alchemy RPC endpoint url from partials
+ * @param {string} partial of network
+ * @returns {string} full rpc url
+ */
+function generateAlchemy(partial: string): string {
+  // Combine partial + API key
+  return `https://${partial}/v2/${process.env.ALCHEMY_API_KEY}`;
+}
+
 // Setup networks
 const ARBITRUM: number = 421611;
-const AVALANCHE_FUJI: number = 43113;
 const rpcNetworks: Record<number, string> = {
-  3: "eth-ropsten.alchemyapi.io",
-  4: "eth-rinkeby.alchemyapi.io",
-  5: "eth-goerli.alchemyapi.io",
-  42: "eth-kovan.alchemyapi.io",
-  69: "opt-kovan.g.alchemy.com",
-  80001: "polygon-mumbai.g.alchemy.com",
-  421611: "arb-rinkeby.g.alchemy.com",
+  //3: generateAlchemy("eth-ropsten.alchemyapi.io"),
+  //4: generateAlchemy("eth-rinkeby.alchemyapi.io"),
+  5: generateAlchemy("eth-goerli.alchemyapi.io"),
+  42: generateAlchemy("eth-kovan.alchemyapi.io"),
+  69: generateAlchemy("opt-kovan.g.alchemy.com"),
+  80001: generateAlchemy("polygon-mumbai.g.alchemy.com"),
+  //421611: generateAlchemy("arb-rinkeby.g.alchemy.com"),
   43113: "https://api.avax-test.network/ext/bc/C/rpc",
 };
 
@@ -47,16 +59,8 @@ function getProviderByNetwork(
 ): ethers.providers.StaticJsonRpcProvider {
   // Collect alchemy RPC URL
   const rpcUrl = rpcNetworks[network];
-
-  // Return setup static provider
-  return new ethers.providers.StaticJsonRpcProvider(
-    // If network is Avalanche
-    network === AVALANCHE_FUJI
-      ? // Return custom RPC
-        rpcUrl
-      : // Else, setup Alchemy RPC
-        `https://${rpcUrl}/v2/${process.env.ALCHEMY_API_KEY}`
-  );
+  // Return static provider
+  return new ethers.providers.StaticJsonRpcProvider(rpcUrl);
 }
 
 /**
@@ -189,7 +193,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     }
   }
 
-  // Update 24h claim status
-  await client.set(session.twitter_id, "true", "EX", 86400);
+  // If not whitelisted
+  if (!whitelist.includes(session.twitter_id)) {
+    // Update 24h claim status
+    await client.set(session.twitter_id, "true", "EX", 86400);
+  }
+
   return res.status(200).send({ claimed: address });
 };

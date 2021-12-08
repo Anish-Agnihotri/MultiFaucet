@@ -3,9 +3,9 @@ import Image from "next/image"; // Image
 import { ethers } from "ethers"; // Address check
 import { toast } from "react-toastify"; // Toast notifications
 import Layout from "components/Layout"; // Layout wrapper
-import { ADDRESSES } from "utils/addresses"; // Faucet addresses
 import styles from "styles/Home.module.scss"; // Styles
 import { ReactElement, useState } from "react"; // Local state + types
+import { getAddressDetails } from "utils/addresses"; // Faucet addresses
 import { hasClaimed } from "pages/api/claim/status"; // Claim status
 import { signIn, getSession, signOut } from "next-auth/client"; // Auth
 
@@ -58,6 +58,9 @@ export default function Home({
   // Loading status
   const [loading, setLoading] = useState<boolean>(false);
 
+  // Collect details about addresses
+  const { networkCount, activeString, sortedAddresses } = getAddressDetails();
+
   /**
    * Processes a claim to the faucet
    */
@@ -100,7 +103,8 @@ export default function Home({
           <TokenLogo name="ETH" imageSrc="/tokens/eth.png" />
           , <TokenLogo name="wETH" imageSrc="/tokens/weth.png" />,
           <TokenLogo name="DAI" imageSrc="/tokens/dai.svg" />, and{" "}
-          <TokenLogo name="NFTs" imageSrc="/tokens/punks.png" /> across 8
+          <TokenLogo name="NFTs" imageSrc="/tokens/punks.png" /> across{" "}
+          {`${networkCount} `}
           testnet networks, at once.
         </span>
       </div>
@@ -218,25 +222,24 @@ export default function Home({
             <h4>General Information</h4>
             <p>The faucet drips 1 ETH, 1 wETH, 500 DAI, and 5 NFTs (ERC721).</p>
             <p className={styles.home__card_content_section_lh}>
-              You will receive these tokens on Ropsten, Kovan, Rinkeby, Görli,
-              Optimistic Kovan, Arbitrum Rinkeby, Polygon Mumbai, and Avalanche
-              Fuji.
+              You will receive these tokens on {activeString}.
             </p>
             <p>You can claim from the faucet once every 24 hours.</p>
           </div>
         </div>
 
         {/* Network details */}
-        {ADDRESSES.map((network) => {
+        {sortedAddresses.map((network) => {
           // For each network
           return (
             <div key={network.network}>
               <div className={styles.home__card_content_section}>
                 {/* Network name */}
                 <h4>
-                  {network.formattedName}{" "}
+                  {network.formattedName}
                   {network.connectionDetails ? (
                     <span>
+                      {" "}
                       (
                       <a
                         href={network.connectionDetails}
@@ -251,6 +254,14 @@ export default function Home({
                         <AddNetworkButton autoconnect={network.autoconnect} />
                       ) : null}
                       )
+                    </span>
+                  ) : null}
+
+                  {/* Optional depleted status */}
+                  {network.depleted ? (
+                    <span className={styles.home__card_depleted}>
+                      {" "}
+                      (empty, pending refill)
                     </span>
                   ) : null}
                 </h4>

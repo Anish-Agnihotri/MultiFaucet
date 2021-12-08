@@ -2,6 +2,7 @@
 export const ADDRESSES = [
   {
     network: "ropsten",
+    depleted: true,
     etherscanPrefix: "ropsten.etherscan.io",
     formattedName: "Ropsten",
     addresses: {
@@ -12,6 +13,7 @@ export const ADDRESSES = [
   },
   {
     network: "kovan",
+    depleted: false,
     etherscanPrefix: "kovan.etherscan.io",
     formattedName: "Kovan",
     addresses: {
@@ -22,6 +24,7 @@ export const ADDRESSES = [
   },
   {
     network: "rinkeby",
+    depleted: true,
     disclaimer: "Faucet drips 100 DAI instead of 500 DAI.",
     etherscanPrefix: "rinkeby.etherscan.io",
     formattedName: "Rinkeby",
@@ -33,6 +36,7 @@ export const ADDRESSES = [
   },
   {
     network: "goerli",
+    depleted: false,
     etherscanPrefix: "goerli.etherscan.io",
     formattedName: "Görli",
     addresses: {
@@ -43,6 +47,7 @@ export const ADDRESSES = [
   },
   {
     network: "kovan-optimistic",
+    depleted: false,
     etherscanPrefix: "kovan-optimistic.etherscan.io",
     formattedName: "Optimistic Kovan",
     connectionDetails:
@@ -66,6 +71,7 @@ export const ADDRESSES = [
   },
   {
     network: "mumbai",
+    depleted: false,
     disclaimer: "Faucet drips MATIC and wMATIC instead of ETH and wETH.",
     etherscanPrefix: "mumbai.polygonscan.com",
     formattedName: "Polygon Mumbai",
@@ -90,6 +96,7 @@ export const ADDRESSES = [
   },
   {
     network: "arb-rinkeby",
+    depleted: true,
     disclaimer: "Faucet drips 100 DAI instead of 500 DAI.",
     etherscanPrefix: "testnet.arbiscan.io",
     formattedName: "Arbitrum Rinkeby",
@@ -113,6 +120,7 @@ export const ADDRESSES = [
   },
   {
     network: "avalanche-fuji",
+    depleted: false,
     disclaimer: "Faucet drips 0.1 AVAX and 0.1 wAVAX instead of ETH and wETH.",
     etherscanPrefix: "testnet.snowtrace.io",
     formattedName: "Avalanche Fuji",
@@ -136,3 +144,32 @@ export const ADDRESSES = [
     },
   },
 ];
+
+/**
+ * Export details about networks
+ */
+export function getAddressDetails() {
+  // Get active networks
+  const activeNetworks: string[] = ADDRESSES.filter(
+    // Filter for non-depleted
+    ({ depleted }) => !depleted
+    // Collect just formatted name
+  ).map(({ formattedName }) => formattedName);
+  // Get number of active networks
+  const networkCount: number = activeNetworks.length;
+
+  // Generate string for active networks
+  // "X, Y, and Z..."
+  const last: string | undefined = activeNetworks.pop();
+  const activeString: string = activeNetworks.join(", ") + " and " + last;
+
+  // Sort addresses (depleted last)
+  const sortedAddresses = ADDRESSES.sort((a, b) => {
+    const first = a.depleted ?? false;
+    const second = b.depleted ?? false;
+    return Number(first) - Number(second);
+  });
+
+  // Return details
+  return { networkCount, activeString, sortedAddresses };
+}
