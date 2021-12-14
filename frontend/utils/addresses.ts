@@ -72,7 +72,7 @@ export const ADDRESSES = [
   {
     network: "mumbai",
     depleted: false,
-    disclaimer: "Faucet drips MATIC and wMATIC instead of ETH and wETH.",
+    disclaimer: "Faucet drips 0.1 MATIC and wMATIC instead of ETH and wETH.",
     etherscanPrefix: "mumbai.polygonscan.com",
     formattedName: "Polygon Mumbai",
     connectionDetails:
