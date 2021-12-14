@@ -228,6 +228,10 @@ export default function Home({
         <div>
           <div className={styles.home__card_content_section}>
             <h4>General Information</h4>
+            <p>
+              Your Twitter account must have at least 1 Tweet, 15 followers, and
+              be older than 1 month.
+            </p>
             <p>The faucet drips 1 ETH, 1 wETH, 500 DAI, and 5 NFTs (ERC721).</p>
             <p className={styles.home__card_content_section_lh}>
               You will receive these tokens on {activeString}.

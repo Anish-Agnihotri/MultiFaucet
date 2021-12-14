@@ -2,6 +2,7 @@ import Redis from "ioredis"; // Redis
 import { ethers } from "ethers"; // Ethers
 import { WebClient } from "@slack/web-api"; // Slack
 import { isValidInput } from "pages/index"; // Address check
+import parseTwitterDate from "utils/dates"; // Parse Twitter dates
 import { getSession } from "next-auth/client"; // Session management
 import { hasClaimed } from "pages/api/claim/status"; // Claim status
 import type { NextApiRequest, NextApiResponse } from "next"; // Types
@@ -23,6 +24,8 @@ async function postSlackMessage(message: string): Promise<void> {
   await slack.chat.postMessage({
     channel: slackChannel,
     text: message,
+    // Ping user on error
+    link_names: true,
   });
 }
 
@@ -135,11 +138,12 @@ async function processDrip(
       gasLimit: network === ARBITRUM ? 5_000_000 : 500_000,
       data,
       nonce,
+      type: 0,
     });
   } catch (e) {
     console.log(e);
     await postSlackMessage(
-      `Error dripping for ${provider.network.chainId}, ${String(e)}`
+      `@anish Error dripping for ${provider.network.chainId}, ${String(e)}`
     );
     throw new Error(`Error when processing drip for network ${network}`);
   }
@@ -154,6 +158,24 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (!session) {
     // Return unauthed status
     return res.status(401).send({ error: "Not authenticated." });
+  }
+
+  // Basic anti-bot measures
+  const ONE_MONTH_SECONDS = 2629746;
+  if (
+    // Less than 1 tweet
+    session.twitter_num_tweets == 0 ||
+    // Less than 15 followers
+    session.twitter_num_followers < 15 ||
+    // Less than 1 month old
+    new Date().getTime() -
+      parseTwitterDate(session.twitter_created_at).getTime() <
+      ONE_MONTH_SECONDS
+  ) {
+    // Return invalid Twitter account status
+    return res
+      .status(400)
+      .send({ error: "Twitter account does not pass anti-bot checks." });
   }
 
   if (!address || !isValidInput(address)) {

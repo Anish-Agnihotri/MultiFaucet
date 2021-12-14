@@ -34,9 +34,12 @@ export default NextAuth({
 
       // If signing in
       if (isSignIn) {
-        // Attach additional parameters (twitter id + handle)
+        // Attach additional parameters (twitter id + handle + anti-bot measures)
         token.twitter_id = account?.id;
         token.twitter_handle = profile?.screen_name;
+        token.twitter_num_tweets = profile?.statuses_count;
+        token.twitter_num_followers = profile?.followers_count;
+        token.twitter_created_at = profile?.created_at;
       }
 
       // Resolve JWT
@@ -47,6 +50,9 @@ export default NextAuth({
       // Attach additional params from JWT to session
       session.twitter_id = user.twitter_id;
       session.twitter_handle = user.twitter_handle;
+      session.twitter_num_tweets = user.twitter_statuses_count;
+      session.twitter_num_followers = user.twitter_followers_count;
+      session.twitter_created_at = user.twitter_created_at;
 
       // Resolve session
       return Promise.resolve(session);
