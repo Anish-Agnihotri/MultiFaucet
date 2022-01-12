@@ -2,8 +2,8 @@
 export const ADDRESSES = [
   {
     network: "ropsten",
-    depleted: true,
-    disclaimer: "Temporary outage. Expected back by 1/12/2022.",
+    depleted: false,
+    disclaimer: "Faucet is temporarily not dripping DAI.",
     etherscanPrefix: "ropsten.etherscan.io",
     formattedName: "Ropsten",
     addresses: {

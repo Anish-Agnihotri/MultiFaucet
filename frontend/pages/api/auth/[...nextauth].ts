@@ -50,8 +50,8 @@ export default NextAuth({
       // Attach additional params from JWT to session
       session.twitter_id = user.twitter_id;
       session.twitter_handle = user.twitter_handle;
-      session.twitter_num_tweets = user.twitter_statuses_count;
-      session.twitter_num_followers = user.twitter_followers_count;
+      session.twitter_num_tweets = user.twitter_num_tweets;
+      session.twitter_num_followers = user.twitter_num_followers;
       session.twitter_created_at = user.twitter_created_at;
 
       // Resolve session
