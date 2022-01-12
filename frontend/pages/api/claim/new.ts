@@ -47,7 +47,7 @@ const rpcNetworks: Record<number, string> = {
   5: generateAlchemy("eth-goerli.alchemyapi.io"),
   42: generateAlchemy("eth-kovan.alchemyapi.io"),
   69: generateAlchemy("opt-kovan.g.alchemy.com"),
-  80001: generateAlchemy("polygon-mumbai.g.alchemy.com"),
+  //80001: generateAlchemy("polygon-mumbai.g.alchemy.com"),
   //421611: generateAlchemy("arb-rinkeby.g.alchemy.com"),
   43113: "https://api.avax-test.network/ext/bc/C/rpc",
 };
@@ -143,7 +143,9 @@ async function processDrip(
   } catch (e) {
     console.log(e);
     await postSlackMessage(
-      `@anish Error dripping for ${provider.network.chainId}, ${String(e)}`
+      `@anish Error dripping for ${provider.network.chainId}, ${String(
+        (e as any).reason
+      )}`
     );
     throw new Error(`Error when processing drip for network ${network}`);
   }
@@ -225,11 +227,16 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       // Process faucet claims
       await processDrip(wallet, Number(networkId), data);
     } catch (e) {
-      console.log(e);
+      // If not whitelisted, force user to wait 15 minutes
+      if (!whitelist.includes(session.twitter_id)) {
+        // Update 24h claim status
+        await client.set(session.twitter_id, "true", "EX", 900);
+      }
+
       // If error in process, revert
       return res
         .status(500)
-        .send({ error: "Error claiming, try again in 5 minutes." });
+        .send({ error: "Error fully claiming, try again in 15 minutes." });
     }
   }
 

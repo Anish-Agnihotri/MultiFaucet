@@ -3,6 +3,7 @@ export const ADDRESSES = [
   {
     network: "ropsten",
     depleted: true,
+    disclaimer: "Temporary outage. Expected back by 1/12/2022.",
     etherscanPrefix: "ropsten.etherscan.io",
     formattedName: "Ropsten",
     addresses: {
@@ -37,6 +38,7 @@ export const ADDRESSES = [
   {
     network: "goerli",
     depleted: false,
+    disclaimer: "Faucet is temporarily not dripping DAI.",
     etherscanPrefix: "goerli.etherscan.io",
     formattedName: "Görli",
     addresses: {
@@ -71,8 +73,8 @@ export const ADDRESSES = [
   },
   {
     network: "mumbai",
-    depleted: false,
-    disclaimer: "Faucet drips 0.1 MATIC and wMATIC instead of ETH and wETH.",
+    depleted: true,
+    disclaimer: "Temporary outage. Expected back by 1/12/2022.",
     etherscanPrefix: "mumbai.polygonscan.com",
     formattedName: "Polygon Mumbai",
     connectionDetails:
