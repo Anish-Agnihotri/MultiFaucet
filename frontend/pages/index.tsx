@@ -65,6 +65,8 @@ export default function Home({
   const [firstClaim, setFirstClaim] = useState<boolean>(false);
   // Loading status
   const [loading, setLoading] = useState<boolean>(false);
+  // Claim other
+  const [claimOther, setClaimOther] = useState<boolean>(false);
 
   // Collect details about addresses
   const { networkCount, sortedAddresses } = getAddressDetails();
@@ -78,7 +80,7 @@ export default function Home({
 
     try {
       // Post new claim with recipient address
-      await axios.post("/api/claim/new", { address });
+      await axios.post("/api/claim/new", { address, others: claimOther });
       // Toast if success + toggle claimed
       toast.success("Tokens dispersed—check balances shortly!");
       setClaimed(true);
@@ -185,6 +187,19 @@ export default function Home({
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
                   />
+
+                  {/* Other networks checkbox */}
+                  <div className={styles.content__unclaimed_others}>
+                    <input
+                      type="checkbox"
+                      value={claimOther.toString()}
+                      onChange={() => setClaimOther((previous) => !previous)}
+                    />
+                    <label>
+                      Drip on additional networks (besides Rinkeby, Ropsten,
+                      Kovan, and Görli)
+                    </label>
+                  </div>
 
                   {isValidInput(address) ? (
                     // If address is valid, allow claiming

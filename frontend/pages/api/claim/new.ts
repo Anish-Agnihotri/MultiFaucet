@@ -41,14 +41,16 @@ function generateAlchemy(partial: string): string {
 
 // Setup networks
 const ARBITRUM: number = 421611;
-const rpcNetworks: Record<number, string> = {
+const mainRpcNetworks: Record<number, string> = {
   3: generateAlchemy("eth-ropsten.alchemyapi.io"),
-  //4: generateAlchemy("eth-rinkeby.alchemyapi.io"),
-  5: generateAlchemy("eth-goerli.alchemyapi.io"),
-  42: generateAlchemy("eth-kovan.alchemyapi.io"),
+  4: generateAlchemy("eth-rinkeby.alchemyapi.io"),
+  // 5: generateAlchemy("eth-goerli.alchemyapi.io"),
+  2: generateAlchemy("eth-kovan.alchemyapi.io"),
+};
+const secondaryRpcNetworks: Record<number, string> = {
   69: generateAlchemy("opt-kovan.g.alchemy.com"),
-  //80001: generateAlchemy("polygon-mumbai.g.alchemy.com"),
-  //421611: generateAlchemy("arb-rinkeby.g.alchemy.com"),
+  80001: generateAlchemy("polygon-mumbai.g.alchemy.com"),
+  421611: generateAlchemy("arb-rinkeby.g.alchemy.com"),
   43113: "https://api.avax-test.network/ext/bc/C/rpc",
 };
 
@@ -75,6 +77,8 @@ function generateTxData(recipient: string): string {
 function getProviderByNetwork(
   network: number
 ): ethers.providers.StaticJsonRpcProvider {
+  // Collect all RPC URLs
+  const rpcNetworks = { ...mainRpcNetworks, ...secondaryRpcNetworks };
   // Collect alchemy RPC URL
   const rpcUrl = rpcNetworks[network];
   // Return static provider
@@ -155,7 +159,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   // Collect session (force any for extra twitter params)
   const session: any = await getSession({ req });
   // Collect address
-  const { address } = req.body;
+  const { address, others }: { address: string; others: boolean } = req.body;
 
   if (!session) {
     // Return unauthed status
@@ -221,8 +225,17 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   // Generate transaction data
   const data: string = generateTxData(addr);
 
-  // For each network
-  for (const networkId of Object.keys(rpcNetworks)) {
+  // Networks to claim on (based on others toggle)
+  const otherNetworks: Record<number, string> = others
+    ? secondaryRpcNetworks
+    : {};
+  const claimNetworks: Record<number, string> = {
+    ...mainRpcNetworks,
+    ...otherNetworks,
+  };
+
+  // For each main network
+  for (const networkId of Object.keys(claimNetworks)) {
     try {
       // Process faucet claims
       await processDrip(wallet, Number(networkId), data);
