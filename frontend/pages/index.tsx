@@ -67,7 +67,7 @@ export default function Home({
   const [loading, setLoading] = useState<boolean>(false);
 
   // Collect details about addresses
-  const { networkCount, activeString, sortedAddresses } = getAddressDetails();
+  const { networkCount, sortedAddresses } = getAddressDetails();
 
   /**
    * Processes a claim to the faucet
@@ -232,9 +232,10 @@ export default function Home({
               Your Twitter account must have at least 1 Tweet, 15 followers, and
               be older than 1 month.
             </p>
-            <p>The faucet drips 1 ETH, 1 wETH, 500 DAI, and 5 NFTs (ERC721).</p>
             <p className={styles.home__card_content_section_lh}>
-              You will receive these tokens on {activeString}.
+              By default, the faucet drips on the Ethereum testnets (Rinkeby,
+              Ropsten, Kovan, Görli). You can choose to receive a drip on other
+              networks when requesting tokens.
             </p>
             <p>You can claim from the faucet once every 24 hours.</p>
           </div>

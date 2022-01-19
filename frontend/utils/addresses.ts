@@ -3,18 +3,18 @@ export const ADDRESSES = [
   {
     network: "ropsten",
     depleted: false,
-    disclaimer: "Faucet is temporarily not dripping DAI.",
+    disclaimer: "Faucet drips 1 ETH, 1 wETH, and 5 NFTs (ERC721).",
     etherscanPrefix: "ropsten.etherscan.io",
     formattedName: "Ropsten",
     addresses: {
       NFTs: "0xf5de760f2e916647fd766b4ad9e85ff943ce3a2b",
       wETH: "0xc778417e063141139fce010982780140aa0cd5ab",
-      DAI: "0x31f42841c2db5173425b5223809cf3a38fede360",
     },
   },
   {
     network: "kovan",
     depleted: false,
+    disclaimer: "Faucet drips 1 ETH, 1 wETH, 500 DAI, and 5 NFTs (ERC721).",
     etherscanPrefix: "kovan.etherscan.io",
     formattedName: "Kovan",
     addresses: {
@@ -25,8 +25,7 @@ export const ADDRESSES = [
   },
   {
     network: "rinkeby",
-    depleted: true,
-    disclaimer: "Faucet drips 100 DAI instead of 500 DAI.",
+    disclaimer: "Faucet drips 0.1 ETH, 0.1 wETH, 10 DAI, and 5 NFTs (ERC721).",
     etherscanPrefix: "rinkeby.etherscan.io",
     formattedName: "Rinkeby",
     addresses: {
@@ -37,19 +36,19 @@ export const ADDRESSES = [
   },
   {
     network: "goerli",
-    depleted: false,
-    disclaimer: "Faucet is temporarily not dripping DAI.",
+    depleted: true,
+    disclaimer: "Faucet drips 1 ETH, 1 wETH, and 5 NFTs (ERC721).",
     etherscanPrefix: "goerli.etherscan.io",
     formattedName: "Görli",
     addresses: {
       NFTs: "0xf5de760f2e916647fd766b4ad9e85ff943ce3a2b",
       wETH: "0xb4fbf271143f4fbf7b91a5ded31805e42b2208d6",
-      DAI: "0x11fe4b6ae13d2a6055c8d9cf65c55bac32b5d844",
     },
   },
   {
     network: "kovan-optimistic",
     depleted: false,
+    disclaimer: "Faucet drips 1 ETH, 1 wETH, 500 DAI, and 5 NFTs (ERC721).",
     etherscanPrefix: "kovan-optimistic.etherscan.io",
     formattedName: "Optimistic Kovan",
     connectionDetails:
@@ -73,8 +72,8 @@ export const ADDRESSES = [
   },
   {
     network: "mumbai",
-    depleted: true,
-    disclaimer: "Temporary outage. Expected back by 1/12/2022.",
+    disclaimer:
+      "Faucet drips 0.1 MATIC, 0.1 wMATIC, 500 DAI, and 5 NFTs (ERC721).",
     etherscanPrefix: "mumbai.polygonscan.com",
     formattedName: "Polygon Mumbai",
     connectionDetails:
@@ -98,8 +97,7 @@ export const ADDRESSES = [
   },
   {
     network: "arb-rinkeby",
-    depleted: true,
-    disclaimer: "Faucet drips 100 DAI instead of 500 DAI.",
+    disclaimer: "Faucet drips 0.1 ETH, 0.1 wETH, 10 DAI, and 5 NFTs (ERC721).",
     etherscanPrefix: "testnet.arbiscan.io",
     formattedName: "Arbitrum Rinkeby",
     connectionDetails: "https://developer.offchainlabs.com/docs/public_testnet",
@@ -123,7 +121,8 @@ export const ADDRESSES = [
   {
     network: "avalanche-fuji",
     depleted: false,
-    disclaimer: "Faucet drips 0.1 AVAX and 0.1 wAVAX instead of ETH and wETH.",
+    disclaimer:
+      "Faucet drips 0.1 AVAX, 0.1 wAVAX, 500 DAI, and 5 NFTs (ERC721).",
     etherscanPrefix: "testnet.snowtrace.io",
     formattedName: "Avalanche Fuji",
     connectionDetails:
@@ -160,11 +159,6 @@ export function getAddressDetails() {
   // Get number of active networks
   const networkCount: number = activeNetworks.length;
 
-  // Generate string for active networks
-  // "X, Y, and Z..."
-  const last: string | undefined = activeNetworks.pop();
-  const activeString: string = activeNetworks.join(", ") + " and " + last;
-
   // Sort addresses (depleted last)
   const sortedAddresses = ADDRESSES.sort((a, b) => {
     const first = a.depleted ?? false;
@@ -173,5 +167,5 @@ export function getAddressDetails() {
   });
 
   // Return details
-  return { networkCount, activeString, sortedAddresses };
+  return { networkCount, sortedAddresses };
 }
