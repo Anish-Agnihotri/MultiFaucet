@@ -52,7 +52,7 @@ export const ADDRESSES = [
     etherscanPrefix: "kovan-optimistic.etherscan.io",
     formattedName: "Optimistic Kovan",
     connectionDetails:
-      "https://community.optimism.io/docs/infra/networks.html#optimistic-kovan",
+      "https://community.optimism.io/docs/useful-tools/networks/#optimism-kovan-testnet",
     autoconnect: {
       chainId: "0x45",
       chainName: "Optimistic Kovan",
@@ -72,6 +72,7 @@ export const ADDRESSES = [
   },
   {
     network: "mumbai",
+    depleted: true,
     disclaimer:
       "Faucet drips 0.1 MATIC, 0.1 wMATIC, 500 DAI, and 5 NFTs (ERC721).",
     etherscanPrefix: "mumbai.polygonscan.com",
