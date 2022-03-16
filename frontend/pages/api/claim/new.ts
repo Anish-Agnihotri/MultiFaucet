@@ -44,14 +44,15 @@ const ARBITRUM: number = 421611;
 const mainRpcNetworks: Record<number, string> = {
   3: generateAlchemy("eth-ropsten.alchemyapi.io"),
   4: generateAlchemy("eth-rinkeby.alchemyapi.io"),
-  // 5: generateAlchemy("eth-goerli.alchemyapi.io"),
+  5: generateAlchemy("eth-goerli.alchemyapi.io"),
   2: generateAlchemy("eth-kovan.alchemyapi.io"),
 };
 const secondaryRpcNetworks: Record<number, string> = {
   69: generateAlchemy("opt-kovan.g.alchemy.com"),
+  1287: "https://rpc.api.moonbase.moonbeam.network",
   80001: generateAlchemy("polygon-mumbai.g.alchemy.com"),
   421611: generateAlchemy("arb-rinkeby.g.alchemy.com"),
-  43113: "https://api.avax-test.network/ext/bc/C/rpc",
+  //43113: "https://api.avax-test.network/ext/bc/C/rpc",
 };
 
 // Setup faucet interface

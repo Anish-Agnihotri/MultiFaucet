@@ -36,7 +36,7 @@ export const ADDRESSES = [
   },
   {
     network: "goerli",
-    depleted: true,
+    depleted: false,
     disclaimer: "Faucet drips 1 ETH, 1 wETH, and 5 NFTs (ERC721).",
     etherscanPrefix: "goerli.etherscan.io",
     formattedName: "Görli",
@@ -72,7 +72,7 @@ export const ADDRESSES = [
   },
   {
     network: "mumbai",
-    depleted: true,
+    depleted: false,
     disclaimer:
       "Faucet drips 0.1 MATIC, 0.1 wMATIC, 500 DAI, and 5 NFTs (ERC721).",
     etherscanPrefix: "mumbai.polygonscan.com",
@@ -121,7 +121,7 @@ export const ADDRESSES = [
   },
   {
     network: "avalanche-fuji",
-    depleted: false,
+    depleted: true,
     disclaimer:
       "Faucet drips 0.1 AVAX, 0.1 wAVAX, 500 DAI, and 5 NFTs (ERC721).",
     etherscanPrefix: "testnet.snowtrace.io",
@@ -143,6 +143,31 @@ export const ADDRESSES = [
       NFTs: "0xf5de760f2e916647fd766b4ad9e85ff943ce3a2b",
       wETH: "0xd00ae08403b9bbb9124bb305c09058e32c39a48c",
       DAI: "0xebbc3452cc911591e4f18f3b36727df45d6bd1f9",
+    },
+  },
+  {
+    network: "moonbase-alpha",
+    depleted: false,
+    disclaimer: "Faucet drips 1 DEV, 1 wDEV, 500 DAI, and 5 NFTs (ERC721).",
+    etherscanPrefix: "moonbase.moonscan.io",
+    formattedName: "Moonbase Alpha",
+    connectionDetails:
+      "https://docs.moonbeam.network/learn/platform/networks/moonbase/",
+    autoconnect: {
+      chainId: "0x507",
+      chainName: "Moonbase Alpha",
+      nativeCurrency: {
+        name: "Dev",
+        symbol: "DEV",
+        decimals: 18,
+      },
+      rpcUrls: ["https://rpc.api.moonbase.moonbeam.network"],
+      blockExplorerUrls: ["https://moonbase.moonscan.io/"],
+    },
+    addresses: {
+      NFTs: "0xf5de760f2e916647fd766B4AD9E85ff943cE3A2b",
+      wETH: "0xD909178CC99d318e4D46e7E66a972955859670E1",
+      DAI: "0x4C153BFaD26628BdbaFECBCD160A0790b1b8F212",
     },
   },
 ];
