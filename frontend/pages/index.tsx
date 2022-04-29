@@ -289,7 +289,7 @@ export default function Home({
                   {network.depleted ? (
                     <span className={styles.home__card_depleted}>
                       {" "}
-                      (empty, pending refill)
+                      (maintenance mode)
                     </span>
                   ) : null}
                 </h4>

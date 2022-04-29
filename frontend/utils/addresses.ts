@@ -2,7 +2,6 @@
 export const ADDRESSES = [
   {
     network: "ropsten",
-    depleted: false,
     disclaimer: "Faucet drips 1 ETH, 1 wETH, and 5 NFTs (ERC721).",
     etherscanPrefix: "ropsten.etherscan.io",
     formattedName: "Ropsten",
@@ -13,7 +12,6 @@ export const ADDRESSES = [
   },
   {
     network: "kovan",
-    depleted: false,
     disclaimer: "Faucet drips 1 ETH, 1 wETH, 500 DAI, and 5 NFTs (ERC721).",
     etherscanPrefix: "kovan.etherscan.io",
     formattedName: "Kovan",
@@ -25,7 +23,7 @@ export const ADDRESSES = [
   },
   {
     network: "rinkeby",
-    disclaimer: "Faucet drips 0.1 ETH, 0.1 wETH, 10 DAI, and 5 NFTs (ERC721).",
+    disclaimer: "Faucet drips 0.5 ETH, 0.5 wETH, 50 DAI, and 5 NFTs (ERC721).",
     etherscanPrefix: "rinkeby.etherscan.io",
     formattedName: "Rinkeby",
     addresses: {
@@ -36,7 +34,6 @@ export const ADDRESSES = [
   },
   {
     network: "goerli",
-    depleted: false,
     disclaimer: "Faucet drips 1 ETH, 1 wETH, and 5 NFTs (ERC721).",
     etherscanPrefix: "goerli.etherscan.io",
     formattedName: "Görli",
@@ -47,7 +44,6 @@ export const ADDRESSES = [
   },
   {
     network: "kovan-optimistic",
-    depleted: false,
     disclaimer: "Faucet drips 1 ETH, 1 wETH, 500 DAI, and 5 NFTs (ERC721).",
     etherscanPrefix: "kovan-optimistic.etherscan.io",
     formattedName: "Optimistic Kovan",
@@ -72,7 +68,6 @@ export const ADDRESSES = [
   },
   {
     network: "mumbai",
-    depleted: false,
     disclaimer:
       "Faucet drips 0.1 MATIC, 0.1 wMATIC, 500 DAI, and 5 NFTs (ERC721).",
     etherscanPrefix: "mumbai.polygonscan.com",
@@ -98,7 +93,7 @@ export const ADDRESSES = [
   },
   {
     network: "arb-rinkeby",
-    disclaimer: "Faucet drips 0.1 ETH, 0.1 wETH, 10 DAI, and 5 NFTs (ERC721).",
+    disclaimer: "Faucet drips 0.5 ETH, 0.5 wETH, 50 DAI, and 5 NFTs (ERC721).",
     etherscanPrefix: "testnet.arbiscan.io",
     formattedName: "Arbitrum Rinkeby",
     connectionDetails: "https://developer.offchainlabs.com/docs/public_testnet",
@@ -147,7 +142,7 @@ export const ADDRESSES = [
   },
   {
     network: "moonbase-alpha",
-    depleted: false,
+    depleted: true,
     disclaimer: "Faucet drips 1 DEV, 1 wDEV, 500 DAI, and 5 NFTs (ERC721).",
     etherscanPrefix: "moonbase.moonscan.io",
     formattedName: "Moonbase Alpha",
