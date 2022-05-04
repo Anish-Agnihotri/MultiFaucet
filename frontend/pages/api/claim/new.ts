@@ -42,7 +42,7 @@ function generateAlchemy(partial: string): string {
 // Setup networks
 const ARBITRUM: number = 421611;
 const mainRpcNetworks: Record<number, string> = {
-  3: generateAlchemy("eth-ropsten.alchemyapi.io"),
+  //3: generateAlchemy("eth-ropsten.alchemyapi.io"),
   4: generateAlchemy("eth-rinkeby.alchemyapi.io"),
   5: generateAlchemy("eth-goerli.alchemyapi.io"),
   42: generateAlchemy("eth-kovan.alchemyapi.io"),
@@ -146,12 +146,19 @@ async function processDrip(
       type: 0,
     });
   } catch (e) {
-    console.log(e);
     await postSlackMessage(
       `@anish Error dripping for ${provider.network.chainId}, ${String(
         (e as any).reason
       )}`
     );
+
+    // Delete nonce key to attempt at self-heal
+    const delStatus: number = await client.del(
+      `nonce-${provider.network.chainId}`
+    );
+    await postSlackMessage(`Attempting self heal: ${delStatus}`);
+
+    // Throw error
     throw new Error(`Error when processing drip for network ${network}`);
   }
 }

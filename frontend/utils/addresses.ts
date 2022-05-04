@@ -2,6 +2,7 @@
 export const ADDRESSES = [
   {
     network: "ropsten",
+    depleted: true,
     disclaimer: "Faucet drips 1 ETH, 1 wETH, and 5 NFTs (ERC721).",
     etherscanPrefix: "ropsten.etherscan.io",
     formattedName: "Ropsten",
