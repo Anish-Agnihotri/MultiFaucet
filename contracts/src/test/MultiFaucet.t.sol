@@ -100,7 +100,7 @@ contract Tests is MultiFaucetTest {
             Errors.NotApprovedOperator
         );
 
-        // Bob can add Alice to super operators
+        // Bob can add Alice to approved operators
         BOB.updateApprovedOperator(address(ALICE), true);
         assertTrue(FAUCET.approvedOperators(address(ALICE)));
 
