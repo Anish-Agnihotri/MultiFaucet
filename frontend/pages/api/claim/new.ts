@@ -42,10 +42,8 @@ function generateAlchemy(partial: string): string {
 // Setup networks
 const ARBITRUM: number = 421611;
 const mainRpcNetworks: Record<number, string> = {
-  //3: generateAlchemy("eth-ropsten.alchemyapi.io"),
-  4: generateAlchemy("eth-rinkeby.alchemyapi.io"),
-  5: generateAlchemy("eth-goerli.alchemyapi.io"),
-  42: generateAlchemy("eth-kovan.alchemyapi.io"),
+  // 5: generateAlchemy("eth-goerli.alchemyapi.io"),
+  9990: process.env.ALT_RPC || '',
 };
 const secondaryRpcNetworks: Record<number, string> = {
   69: generateAlchemy("opt-kovan.g.alchemy.com"),
