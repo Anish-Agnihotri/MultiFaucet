@@ -13,6 +13,8 @@
   "dependencies": {
     "@slack/web-api": "^6.5.1",
     "axios": "^0.24.0",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.0",
     "ethers": "^5.4.7",
     "ioredis": "^4.28.0",
     "next": "^12.0.4",

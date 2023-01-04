@@ -1,17 +1,15 @@
-import Redis from "ioredis"; // Redis
-import { ethers } from "ethers"; // Ethers
-import { WebClient } from "@slack/web-api"; // Slack
-import { isValidInput } from "pages/index"; // Address check
-import parseTwitterDate from "utils/dates"; // Parse Twitter dates
-import { getSession } from "next-auth/client"; // Session management
-import { hasClaimed } from "pages/api/claim/status"; // Claim status
-import type { NextApiRequest, NextApiResponse } from "next"; // Types
+import { Network } from './../../../core/types/dto/create-network.dto';
+import { ethers } from "ethers";
+import { WebClient } from "@slack/web-api";
+import { isValidInput } from "pages/index";
+import parseTwitterDate from "utils/dates";
+import { getSession } from "next-auth/client";
+import { hasClaimed } from "pages/api/claim/status";
+import type { NextApiRequest, NextApiResponse } from "next";
+import { client, networkOps } from 'core/redis';
 
 // Setup whitelist (Anish)
-const whitelist: string[] = ["1078014622525988864"];
-
-// Setup redis client
-const client = new Redis(process.env.REDIS_URL);
+const whitelist: string[] = [];
 
 // Setup slack client
 const slack = new WebClient(process.env.SLACK_ACCESS_TOKEN);
@@ -29,30 +27,6 @@ async function postSlackMessage(message: string): Promise<void> {
   });
 }
 
-/**
- * Generate Alchemy RPC endpoint url from partials
- * @param {string} partial of network
- * @returns {string} full rpc url
- */
-function generateAlchemy(partial: string): string {
-  // Combine partial + API key
-  return `https://${partial}/v2/${process.env.ALCHEMY_API_KEY}`;
-}
-
-// Setup networks
-const ARBITRUM: number = 421611;
-const mainRpcNetworks: Record<number, string> = {
-  // 5: generateAlchemy("eth-goerli.alchemyapi.io"),
-  9990: process.env.ALT_RPC || '',
-};
-const secondaryRpcNetworks: Record<number, string> = {
-  69: generateAlchemy("opt-kovan.g.alchemy.com"),
-  //1287: "https://rpc.api.moonbase.moonbeam.network",
-  80001: generateAlchemy("polygon-mumbai.g.alchemy.com"),
-  421611: generateAlchemy("arb-rinkeby.g.alchemy.com"),
-  //43113: "https://api.avax-test.network/ext/bc/C/rpc",
-};
-
 // Setup faucet interface
 const iface = new ethers.utils.Interface([
   "function drip(address _recipient) external",
@@ -69,37 +43,21 @@ function generateTxData(recipient: string): string {
 }
 
 /**
- * Collects StaticJsonRpcProvider by network
- * @param {number} network id
- * @returns {ethers.providers.StaticJsonRpcProvider} provider
- */
-function getProviderByNetwork(
-  network: number
-): ethers.providers.StaticJsonRpcProvider {
-  // Collect all RPC URLs
-  const rpcNetworks = { ...mainRpcNetworks, ...secondaryRpcNetworks };
-  // Collect alchemy RPC URL
-  const rpcUrl = rpcNetworks[network];
-  // Return static provider
-  return new ethers.providers.StaticJsonRpcProvider(rpcUrl);
-}
-
-/**
  * Collects nonce by network (cache first)
- * @param {number} network id
+ * @param {Network} network Network
  * @returns {Promise<number>} network account nonce
  */
-async function getNonceByNetwork(network: number): Promise<number> {
+async function getNonceByNetwork(network: Network): Promise<number> {
   // Collect nonce from redis
-  const redisNonce: string | null = await client.get(`nonce-${network}`);
+  const redisNonce: string | null = await client.get(`nonce-${network.chainId}`);
 
   // If no redis nonce
   if (redisNonce == null) {
     // Update to last network nonce
-    const provider = getProviderByNetwork(network);
+    const provider = new ethers.providers.StaticJsonRpcProvider(network.rpc)
     return await provider.getTransactionCount(
       // Collect nonce for operator
-      process.env.NEXT_PUBLIC_OPERATOR_ADDRESS ?? ""
+      process.env.OPERATOR_ADDRESS ?? ""
     );
   } else {
     // Else, return cached nonce
@@ -115,37 +73,31 @@ async function getNonceByNetwork(network: number): Promise<number> {
  */
 async function processDrip(
   wallet: ethers.Wallet,
-  network: number,
+  network: Network,
   data: string
 ): Promise<void> {
-  // Collect provider
-  const provider = getProviderByNetwork(network);
-
-  // Connect wallet to network
+  const provider = new ethers.providers.StaticJsonRpcProvider(network.rpc)
   const rpcWallet = wallet.connect(provider);
-  // Collect nonce for network
   const nonce = await getNonceByNetwork(network);
-  // Collect gas price * 2 for network
   const gasPrice = (await provider.getGasPrice()).mul(2);
 
   // Update nonce for network in redis w/ 5m ttl
   await client.set(`nonce-${network}`, nonce + 1, "EX", 300);
 
-  // Return populated transaction
   try {
-    await rpcWallet.sendTransaction({
-      to: process.env.FAUCET_ADDRESS ?? "",
+    const rs = await rpcWallet.sendTransaction({
+      to: network.faucetContractAddress,
       from: wallet.address,
       gasPrice,
       // Custom gas override for Arbitrum w/ min gas limit
-      gasLimit: network === ARBITRUM ? 5_000_000 : 500_000,
+      gasLimit: 500_000,
       data,
       nonce,
       type: 0,
     });
   } catch (e) {
     await postSlackMessage(
-      `@anish Error dripping for ${provider.network.chainId}, ${String(
+      `Multi Faucet Error dripping for ${provider.network.chainId}, ${String(
         (e as any).reason
       )}`
     );
@@ -162,46 +114,38 @@ async function processDrip(
 }
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-  // Collect session (force any for extra twitter params)
   const session: any = await getSession({ req });
-  // Collect address
-  const { address, others }: { address: string; others: boolean } = req.body;
+  const { address }: { address: string; } = req.body;
 
   if (!session) {
-    // Return unauthed status
     return res.status(401).send({ error: "Not authenticated." });
   }
 
-  // Basic anti-bot measures
   const ONE_MONTH_SECONDS = 2629746;
   if (
-    // Less than 1 tweet
     session.twitter_num_tweets == 0 ||
-    // Less than 15 followers
     session.twitter_num_followers < 15 ||
     // Less than 1 month old
     new Date().getTime() -
       parseTwitterDate(session.twitter_created_at).getTime() <
       ONE_MONTH_SECONDS
   ) {
-    // Return invalid Twitter account status
     return res
       .status(400)
       .send({ error: "Twitter account does not pass anti-bot checks." });
   }
 
   if (!address || !isValidInput(address)) {
-    // Return invalid address status
     return res.status(400).send({ error: "Invalid address." });
   }
 
-  // Collect address
+  // Collect address from ENS
   let addr: string = address;
   // If address is ENS name
   if (~address.toLowerCase().indexOf(".eth")) {
     // Setup custom mainnet provider
     const provider = new ethers.providers.StaticJsonRpcProvider(
-      `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`
+      'https://rpc.ankr.com/eth'
     );
 
     // Collect 0x address from ENS
@@ -221,30 +165,16 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   const claimed: boolean = await hasClaimed(session.twitter_id);
   if (claimed) {
-    // Return already claimed status
     return res.status(400).send({ error: "Already claimed in 24h window" });
   }
 
-  // Setup wallet w/o RPC provider
   const wallet = new ethers.Wallet(process.env.OPERATOR_PRIVATE_KEY ?? "");
-
-  // Generate transaction data
   const data: string = generateTxData(addr);
+  const networks = await networkOps.readNetworks()
 
-  // Networks to claim on (based on others toggle)
-  const otherNetworks: Record<number, string> = others
-    ? secondaryRpcNetworks
-    : {};
-  const claimNetworks: Record<number, string> = {
-    ...mainRpcNetworks,
-    ...otherNetworks,
-  };
-
-  // For each main network
-  for (const networkId of Object.keys(claimNetworks)) {
+  for (const network of networks) {
     try {
-      // Process faucet claims
-      await processDrip(wallet, Number(networkId), data);
+      await processDrip(wallet, network, data);
     } catch (e) {
       // If not whitelisted, force user to wait 15 minutes
       if (!whitelist.includes(session.twitter_id)) {
@@ -259,7 +189,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     }
   }
 
-  // If not whitelisted
   if (!whitelist.includes(session.twitter_id)) {
     // Update 24h claim status
     await client.set(session.twitter_id, "true", "EX", 86400);

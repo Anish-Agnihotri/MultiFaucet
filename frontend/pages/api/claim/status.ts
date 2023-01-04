@@ -1,9 +1,7 @@
 import Redis from "ioredis"; // Redis
 import { getSession } from "next-auth/client"; // Session management
 import type { NextApiRequest, NextApiResponse } from "next"; // Types
-
-// Setup redis client
-const client = new Redis(process.env.REDIS_URL);
+import { client } from 'core/redis';
 
 /**
  * Checks if a twitter id has claimed from faucet in last 24h
