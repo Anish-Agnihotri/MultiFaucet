@@ -4,9 +4,26 @@
 
 Frontend to accompany [MultiFaucet contracts](https://github.com/alt-research/alt-contracts/tree/feat/faucet-contract/contracts/faucet). Authenticates user with Twitter OAuth, stores claim for 24h in Redis, calls drip function on contract.
 
-## Run locally
+## Env
+| - | - |
+| --- | --- |
+| REDIS_URL | Redis connection URI |
+| NEXTAUTH_URL | site base URL, eg. http://localhost:3000 |
+| NEXTAUTH_JWT_SECRET | any string  |
+| TWITTER_CLIENT_ID | [Consumer key](https://developer.twitter.com/en/portal/projects/1596429959400402946/apps/26149609/keys). Don't regenerate easily, will influence all projects |
+| TWITTER_CLIENT_SECRET | [Consumer secret](https://developer.twitter.com/en/portal/projects/1596429959400402946/apps/26149609/keys) |
+| OPERATOR_ADDRESS | account which deployed multi-faucet contract |
+| OPERATOR_PRIVATE_KEY | private key of account which deployed multi-faucet contract  |
+| SLACK_CHANNEL | as-is |
+| SLACK_ACCESS_TOKEN | as-is |
+| ADMIN_KEY | key to verify user who do some restrict calls |
 
+## Run locally
 ```bash
+# run Redis
+docker pull redis:latest
+docker run -itd --name redis-test -p 6379:6379 redis
+
 # Install dependencies
 yarn install
 
@@ -18,8 +35,13 @@ vim .env.local
 yarn dev
 ```
 
-## Development
-```
+## Deployment
+
+``` bash
+# run Redis
+docker pull redis:latest
+docker run -itd --name redis-test -p 6379:6379 redis
+
 yarn install
 
 cp .env.sample .env
